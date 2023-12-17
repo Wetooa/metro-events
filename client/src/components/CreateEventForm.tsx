@@ -1,6 +1,9 @@
 "use client";
 
 import React, { FormEvent, useState } from "react";
+import Input from "./UI/Input";
+import Textarea from "./UI/Textarea";
+import Button from "./UI/Button";
 
 function EventForm() {
   const [isCreatingEvent, setIsCreatingEvent] = useState(false);
@@ -16,19 +19,29 @@ function EventForm() {
         <h5>Create An Event</h5>
 
         <form onSubmit={handleCreateEvent} action="">
-          <label htmlFor="title">Title</label>
-          <input type="text" name="title" placeholder="Enter text" />
+          <Input
+            title="Title"
+            name="title"
+            type="text"
+            placeholder="ex. Hiking"
+          />
+          <Input title="Date" name="date" type="date" />
+          <Input
+            title="Address"
+            name="address"
+            type="text"
+            placeholder="ex. Mt. Kammungay"
+          />
+          <Input title="Location" name="location" type="text" />
+          <Textarea
+            title="Info"
+            name="info"
+            placeholder="ex. A hike to the woods"
+          />
 
-          <label htmlFor="">Date</label>
-          <input type="date" />
-
-          <label htmlFor="">Location</label>
-          <input type="text" />
-
-          <label htmlFor="info">Info</label>
-          <textarea placeholder=""></textarea>
-
-          <button type="submit">Create Event</button>
+          <Button isLoading={false} content="Create Event" type="submit">
+            Create Event
+          </Button>
         </form>
       </div>
 

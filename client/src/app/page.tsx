@@ -1,4 +1,4 @@
-import EventForm from "@/components/EventForm";
+import EventForm from "@/components/CreateEventForm";
 import Event from "../components/Event";
 
 export default function Home() {
