@@ -6,10 +6,10 @@ export default function LeftSidebar() {
       <h4 className="">Metro Events</h4>
 
       <ul className="flex flex-col gap-2 items-center">
-        <LeftSidebarLink name={"home"} src={"/"} />
-        <LeftSidebarLink name={"profile"} src={"/profile"} />
-        <LeftSidebarLink name={"notifications"} src={"/notifications"} />
-        <LeftSidebarLink name={"bookmarks"} src={"/bookmarks"} />
+        <LeftSidebarLink name={"home"} href={"/"} />
+        <LeftSidebarLink name={"profile"} href={"/profile"} />
+        <LeftSidebarLink name={"notifications"} href={"/notifications"} />
+        <LeftSidebarLink name={"bookmarks"} href={"/bookmarks"} />
       </ul>
     </nav>
   );

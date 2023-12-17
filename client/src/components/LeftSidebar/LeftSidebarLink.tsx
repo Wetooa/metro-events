@@ -1,14 +1,16 @@
-import Link from "next/link";
 import React from "react";
+import Link, { LinkProps } from "next/link";
 
-interface LeftSidebarLinkProps {
+interface LeftSidebarLinkProps extends LinkProps {
   name: string;
-  src: string;
 }
 
-export default function LeftSidebarLink({ name, src }: LeftSidebarLinkProps) {
+export default function LeftSidebarLink({
+  name,
+  ...props
+}: Readonly<LeftSidebarLinkProps>) {
   return (
-    <Link className="group/link" href={src}>
+    <Link {...props} className="group/link">
       <p>{name}</p>
       {/* <span className="transition-all group/link hidden group-hover/link:absolute left-20">
             testing
