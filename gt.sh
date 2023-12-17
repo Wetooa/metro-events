@@ -1,2 +1,4 @@
 
-git add . && git commit -m "[adrian] $1" && git push
+
+
+git add . && git commit -m "[Adrian] $1" && git push
