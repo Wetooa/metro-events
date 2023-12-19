@@ -1,6 +1,7 @@
 import React from "react";
 import Input from "../UI/Input";
 import Button from "../UI/Button";
+import Link from "next/link";
 
 export default function UserDetails() {
   const isSignedIn = false;
@@ -22,10 +23,16 @@ export default function UserDetails() {
           <form action="">
             <Input title="Email" type="email" />
             <Input title="Password" type="password" />
-
             <Button isLoading={false} content="Login" type="submit">
               Login
             </Button>
+
+            <div className="text-xs">
+              Dont have an account?{" "}
+              <Link className="a-link" href={"/register"}>
+                Create an account
+              </Link>
+            </div>
           </form>
         </>
       )}

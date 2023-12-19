@@ -26,6 +26,12 @@ body {
     rgb(var(--background-start-rgb));
 }
 
+@layer components {
+  .a-link {
+    @apply hover:underline font-bold;
+  }
+}
+
 @layer base {
   label {
     @apply block;

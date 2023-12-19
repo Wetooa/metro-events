@@ -1,8 +1,49 @@
+"use client";
+
 import React from "react";
+import Button from "./UI/Button";
+
+import { FaShareSquare, FaComment } from "react-icons/fa";
+import { AiFillLike, AiFillDislike } from "react-icons/ai";
+import { useRouter } from "next/navigation";
 
 export default function Event() {
+  const router = useRouter();
+
+  function handleShareEvent() {}
+
+  function handleLikeEvent() {}
+
+  function handleDislikeEvent() {}
+
+  function handleCommentOnEvent() {}
+
+  const eventButtons = [
+    {
+      icon: <FaShareSquare />,
+      fc: handleShareEvent,
+    },
+    {
+      icon: <FaComment />,
+      fc: handleCommentOnEvent,
+    },
+    {
+      icon: <AiFillLike />,
+      fc: handleLikeEvent,
+    },
+    {
+      icon: <AiFillDislike />,
+      fc: handleDislikeEvent,
+    },
+  ];
+
   return (
-    <section className="border-t border-white/20 p-4">
+    <section
+      // tmp solution
+      onKeyDown={() => {}}
+      onClick={() => router.push(`/event?id=${0}`)}
+      className="hover:bg-black/30 transition-all border-t border-white/20 p-4"
+    >
       <h6 className="">Event Title</h6>
       <p className="text-sm">
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Error fugiat ad
@@ -16,10 +57,22 @@ export default function Event() {
       </div>
 
       <div className="flex w-full justify-around">
-        <button className="hover:bg-white/30 rounded-full p-1 px-2">A</button>
-        <button className="hover:bg-white/30 rounded-full p-1 px-2">A</button>
-        <button className="hover:bg-white/30 rounded-full p-1 px-2">A</button>
-        <button className="hover:bg-white/30 rounded-full p-1 px-2">A</button>
+        {eventButtons.map(({ icon, fc }, index) => {
+          return (
+            <Button
+              key={index}
+              className="rounded-full w-fit h-fit p-2"
+              variant={"subtle"}
+              isLoading={false}
+              onClick={(event) => {
+                event.stopPropagation();
+                fc();
+              }}
+            >
+              {icon}
+            </Button>
+          );
+        })}
       </div>
     </section>
   );

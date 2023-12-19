@@ -1,4 +1,4 @@
-import EventForm from "@/components/CreateEventForm";
+import CreateEventForm from "@/components/CreateEventForm";
 import Event from "../components/Event";
 
 export default function Home() {
@@ -10,7 +10,7 @@ export default function Home() {
       </section>
 
       {/* only if organizer */}
-      <EventForm />
+      <CreateEventForm />
 
       <main>
         <Event />

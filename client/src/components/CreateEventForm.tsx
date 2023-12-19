@@ -5,7 +5,7 @@ import Input from "./UI/Input";
 import Textarea from "./UI/Textarea";
 import Button from "./UI/Button";
 
-function EventForm() {
+function CreateEventForm() {
   const [isCreatingEvent, setIsCreatingEvent] = useState(false);
 
   function handleCreateEvent(event: FormEvent) {
@@ -55,4 +55,4 @@ function EventForm() {
   );
 }
 
-export default EventForm;
+export default CreateEventForm;
