@@ -1,39 +1,36 @@
-import React from "react";
-import Input from "../UI/Input";
-import Button from "../UI/Button";
-import Link from "next/link";
+"use client";
+
+import React, { useEffect } from "react";
+import LoginForm from "../Login/LoginForm";
+import { useAppDispatch, useAppSelector } from "@/context/hooks";
+import { fetchUser } from "@/context/features/user/userSlice";
 
 export default function UserDetails() {
-  const isSignedIn = false;
+  const { user } = useAppSelector((state) => state.user);
+
+  // might balhin this somewhere
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(fetchUser());
+  }, [dispatch]);
 
   return (
     <section className="m-2 p-2 bg-white/10 rounded-lg">
-      {isSignedIn ? (
+      {user ? (
         <>
-          <h4 className="">Username</h4>
+          <h4 className="">{user.username}</h4>
 
-          <p>some info here</p>
-          <p>some info here</p>
-          <p>some info here</p>
+          <p>{user.privilege}</p>
+          <p>
+            {user.firstname} {user.lastname}
+          </p>
+          <p>{user.address}</p>
         </>
       ) : (
         <>
           <h4>Join now</h4>
 
-          <form action="">
-            <Input title="Email" type="email" />
-            <Input title="Password" type="password" />
-            <Button isLoading={false} content="Login" type="submit">
-              Login
-            </Button>
-
-            <div className="text-xs">
-              Dont have an account?{" "}
-              <Link className="a-link" href={"/register"}>
-                Create an account
-              </Link>
-            </div>
-          </form>
+          <LoginForm />
         </>
       )}
     </section>

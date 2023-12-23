@@ -7,25 +7,29 @@ import Button from "../UI/Button";
 import { supabase } from "@/utils/supabase";
 import { formEventToObject, handleSupabaseAsyncError } from "@/utils/utils";
 import Link from "next/link";
+import { fetchUser } from "@/context/features/user/userSlice";
 
 export default function RegisterForm() {
   async function handleRegister(event: FormEvent) {
     event.preventDefault();
 
     const inputs = formEventToObject(event);
+    const { password, ...filteredInputs } = inputs;
 
-    await handleSupabaseAsyncError(
+    const result = await handleSupabaseAsyncError(
       () =>
         supabase.auth.signUp({
           email: inputs.email,
           password: inputs.password,
           options: {
-            data: inputs,
+            data: filteredInputs,
             // emailRedirectTo: "https//example.com/welcome",
           },
         }),
       "User signed up successfully!"
     );
+
+    if (result) fetchUser();
   }
 
   return (
@@ -36,7 +40,7 @@ export default function RegisterForm() {
         <Input name="firstname" />
         <Input name="lastname" />
         <Input name="username" />
-        <Input name="birthday" />
+        <Input name="birthday" type="date" />
         <Input name="address" />
 
         <Input name="email" type="email" />

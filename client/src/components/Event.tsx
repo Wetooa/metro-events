@@ -39,10 +39,9 @@ export default function Event() {
 
   return (
     <section
-      // tmp solution
       onKeyDown={() => {}}
       onClick={() => router.push(`/event?id=${0}`)}
-      className="hover:bg-black/30 transition-all border-t border-white/20 p-4"
+      className="hover:bg-black/30 transition-all border-t border-white/20 p-4 text-start"
     >
       <h6 className="">Event Title</h6>
       <p className="text-sm">

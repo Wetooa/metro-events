@@ -3,7 +3,6 @@ import clsx, { ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import {toast} from "react-toastify"
 import { FormEvent } from "react";
-import { AuthResponse } from "@supabase/supabase-js";
 
 
 export function cn(...inputs: ClassValue[]) {
@@ -11,20 +10,17 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 
-export async function handleSupabaseAsyncError(asyncFunc: () => Promise<AuthResponse>, successMessage?: string): Promise<AuthResponse | null> {
+export async function handleSupabaseAsyncError<T extends () => any>(asyncFunc: T, successMessage?: string): Promise<ReturnType<T> | null> {
   try { 
     const result =  await asyncFunc();
     if (!result || result.error) throw new Error(result.error.message);
+    toast.success(successMessage ?? "Task was successful!");
     return result;
-
-    toast.success(successMessage);
   } catch(error: any) {
     toast.error(`Error: ${error.message}`);
   }
-
   return null;
 }
-
 
 
 export function formEventToObject(formEvent: FormEvent) {

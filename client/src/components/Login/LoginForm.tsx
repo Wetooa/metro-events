@@ -6,14 +6,18 @@ import Input from "../UI/Input";
 import { supabase } from "@/utils/supabase";
 import { formEventToObject, handleSupabaseAsyncError } from "@/utils/utils";
 import Link from "next/link";
+import { fetchUser } from "@/context/features/user/userSlice";
+import { useAppDispatch } from "@/context/hooks";
 
 export default function LoginForm() {
+  const dispatch = useAppDispatch();
+
   async function handleLogin(event: FormEvent) {
     event.preventDefault();
 
     const inputs = formEventToObject(event);
 
-    await handleSupabaseAsyncError(
+    const result = await handleSupabaseAsyncError(
       () =>
         supabase.auth.signInWithPassword({
           email: inputs.email,
@@ -24,6 +28,8 @@ export default function LoginForm() {
         }),
       "User logged up successfully!"
     );
+
+    if (result) dispatch(fetchUser());
   }
 
   return (
@@ -32,7 +38,7 @@ export default function LoginForm() {
         <Input name="email" />
         <Input name="password" type="password" />
 
-        <Button isLoading={false}>Register</Button>
+        <Button isLoading={false}>Login</Button>
       </form>
 
       <div className="text-xs">
