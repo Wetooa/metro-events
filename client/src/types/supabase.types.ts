@@ -36,6 +36,13 @@ export interface Database {
             foreignKeyName: "fk_comments_comment_id"
             columns: ["comment_id"]
             isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_comments_event_id"
+            columns: ["comment_id"]
+            isOneToOne: false
             referencedRelation: "comments"
             referencedColumns: ["id"]
           },
@@ -132,21 +139,18 @@ export interface Database {
       join_event_requests: {
         Row: {
           event_id: string | null
-          id: string
           message: string | null
           requested_at: string | null
           user_id: string | null
         }
         Insert: {
           event_id?: string | null
-          id?: string
           message?: string | null
           requested_at?: string | null
           user_id?: string | null
         }
         Update: {
           event_id?: string | null
-          id?: string
           message?: string | null
           requested_at?: string | null
           user_id?: string | null
@@ -170,19 +174,16 @@ export interface Database {
       }
       join_organizer_requests: {
         Row: {
-          id: string
           message: string | null
           requested_at: string | null
           user_id: string | null
         }
         Insert: {
-          id?: string
           message?: string | null
           requested_at?: string | null
           user_id?: string | null
         }
         Update: {
-          id?: string
           message?: string | null
           requested_at?: string | null
           user_id?: string | null
@@ -191,7 +192,7 @@ export interface Database {
           {
             foreignKeyName: "fk_join_organizer_requests_user_id"
             columns: ["user_id"]
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: "users"
             referencedColumns: ["id"]
           }
@@ -216,7 +217,7 @@ export interface Database {
           created_at?: string
           email: string
           firstname?: string | null
-          id?: string
+          id: string
           info?: string | null
           lastname?: string | null
           privilege?: Database["public"]["Enums"]["privilege_type"]
@@ -234,7 +235,15 @@ export interface Database {
           privilege?: Database["public"]["Enums"]["privilege_type"]
           username?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "fk_auth_users"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       votes: {
         Row: {
@@ -287,31 +296,72 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
-      create_event: {
-        Args: {
-          title: string
-          date: string
-          location: string
-          info: string
-        }
-        Returns: {
-          address: string | null
-          birthday: string | null
-          created_at: string
-          email: string
-          firstname: string | null
-          id: string
-          info: string | null
-          lastname: string | null
-          privilege: Database["public"]["Enums"]["privilege_type"]
-          username: string
-        }[]
-      }
+      create_event:
+        | {
+            Args: {
+              title: string
+              date: string
+              location: string
+              info: string
+              organizer_id: string
+            }
+            Returns: {
+              address: string | null
+              birthday: string | null
+              created_at: string
+              email: string
+              firstname: string | null
+              id: string
+              info: string | null
+              lastname: string | null
+              privilege: Database["public"]["Enums"]["privilege_type"]
+              username: string
+            }[]
+          }
+        | {
+            Args: {
+              title: string
+              date: string
+              location: string
+              info: string
+              organizer_id: string
+            }
+            Returns: {
+              address: string | null
+              birthday: string | null
+              created_at: string
+              email: string
+              firstname: string | null
+              id: string
+              info: string | null
+              lastname: string | null
+              privilege: Database["public"]["Enums"]["privilege_type"]
+              username: string
+            }[]
+          }
       delete_user: {
         Args: {
           user_id_input: string
         }
         Returns: undefined
+      }
+      get_events: {
+        Args: {
+          user_id_input?: string
+        }
+        Returns: {
+          id: string
+          organizer_id: string
+          organizer_name: string
+          title: string
+          info: string
+          location: string
+          date: string
+          created_at: string
+          upvotes: number
+          downvotes: number
+          is_voted: number
+        }[]
       }
       get_user: {
         Args: {
@@ -335,7 +385,23 @@ export interface Database {
       privilege_type: "admin" | "organizer" | "user"
     }
     CompositeTypes: {
-      [_ in never]: never
+      event_members_return_type: {
+        id: string
+        organizer_id: string
+        created_at: string
+        title: string
+        location: string
+        date: string
+        info: string
+        event_id: string
+        members: unknown
+      }
+      event_members_type: {
+        id: string
+        username: string
+        privilege: Database["public"]["Enums"]["privilege_type"]
+        joined_at: string
+      }
     }
   }
 }

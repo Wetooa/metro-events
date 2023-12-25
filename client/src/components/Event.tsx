@@ -6,8 +6,21 @@ import Button from "./UI/Button";
 import { FaShareSquare, FaComment } from "react-icons/fa";
 import { AiFillLike, AiFillDislike } from "react-icons/ai";
 import { useRouter } from "next/navigation";
+import { GetAllEventsProps } from "@/types/supabase.interface";
 
-export default function Event() {
+interface Event extends GetAllEventsProps {}
+
+export default function Event({
+  title,
+  location,
+  info,
+  date,
+  upvotes,
+  downvotes,
+  is_voted,
+  organizer_id,
+  organizer_name,
+}: GetAllEventsProps) {
   const router = useRouter();
 
   function handleShareEvent() {}
@@ -30,10 +43,12 @@ export default function Event() {
     {
       icon: <AiFillLike />,
       fc: handleLikeEvent,
+      text: upvotes,
     },
     {
       icon: <AiFillDislike />,
       fc: handleDislikeEvent,
+      text: downvotes,
     },
   ];
 
@@ -43,12 +58,13 @@ export default function Event() {
       onClick={() => router.push(`/event?id=${0}`)}
       className="hover:bg-black/30 transition-all border-t border-white/20 p-4 text-start"
     >
-      <h6 className="">Event Title</h6>
-      <p className="text-sm">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Error fugiat ad
-        ut. Dolore, incidunt sed hic saepe quaerat at accusantium ullam vitae
-        officiis. Delectus reprehenderit dicta ratione fugiat. Quasi, mollitia.
-      </p>
+      <div className="flex flex-col">
+        <h6 className="text-lg font-bold">{title}</h6>
+        <p className="text-sm">Organizer: {organizer_name}</p>
+        <p className="text-sm">When: {date}</p>
+        <p className="text-sm">Where: {location}</p>
+        <p className="text-md">{info}</p>
+      </div>
 
       <div className="w-full h-20 px-6 mt-2">
         {/* tmp img */}
@@ -56,7 +72,7 @@ export default function Event() {
       </div>
 
       <div className="flex w-full justify-around">
-        {eventButtons.map(({ icon, fc }, index) => {
+        {eventButtons.map(({ icon, fc, text }, index) => {
           return (
             <Button
               key={index}
@@ -69,6 +85,7 @@ export default function Event() {
               }}
             >
               {icon}
+              {text}
             </Button>
           );
         })}

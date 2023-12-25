@@ -1,5 +1,5 @@
 import CreateEventForm from "@/components/CreateEventForm";
-import Event from "../components/Event";
+import Main from "@/components/EventsPage/Main";
 
 export default function Home() {
   return (
@@ -12,15 +12,8 @@ export default function Home() {
       {/* only if organizer */}
       <CreateEventForm />
 
-      <main>
-        <Event />
-        <Event />
-        <Event />
-        <Event />
-        <Event />
-        <Event />
-        <Event />
-      </main>
+      {/* main shet */}
+      <Main />
     </main>
   );
 }

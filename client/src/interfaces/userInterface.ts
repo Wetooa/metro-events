@@ -23,7 +23,7 @@ interface User extends Omit<RegisterFormInputs, "password" | "pfp" | "coverPhoto
   pfp?: Blob;
   coverPhoto?: Blob;
   info?: string;
-  
+
   id: string;
   privilege: "admin" | "organizer" | "user";
   createdAt: string;

@@ -1,10 +1,10 @@
 
-interface Event {
+export interface Event {
   id: string;
   title: string;
   organizer: string;
   organizerId: string;
-  location: string; 
+  location: string;
   date: string;
   info: string;
   members: EventUser[];

@@ -5,31 +5,33 @@ import Input from "../UI/Input";
 import Textarea from "../UI/Textarea";
 import Button from "../UI/Button";
 import { supabase } from "@/utils/supabase";
-import { formEventToObject, handleSupabaseAsyncError } from "@/utils/utils";
+import { formEventToObject, handleAsyncFunction } from "@/utils/utils";
 import Link from "next/link";
 import { fetchUser } from "@/context/features/user/userSlice";
+import { useAppDispatch } from "@/context/hooks";
+import { useRouter } from "next/navigation";
 
 export default function RegisterForm() {
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+
   async function handleRegister(event: FormEvent) {
     event.preventDefault();
 
     const inputs = formEventToObject(event);
     const { password, ...filteredInputs } = inputs;
 
-    const result = await handleSupabaseAsyncError(
-      () =>
-        supabase.auth.signUp({
-          email: inputs.email,
-          password: inputs.password,
-          options: {
-            data: filteredInputs,
-            // emailRedirectTo: "https//example.com/welcome",
-          },
-        }),
-      "User signed up successfully!"
-    );
-
-    if (result) fetchUser();
+    await handleAsyncFunction(async () => {
+      await supabase.auth.signUp({
+        email: inputs.email,
+        password: inputs.password,
+        options: {
+          data: filteredInputs,
+        },
+      });
+      dispatch(fetchUser());
+      router.push("/");
+    }, "User signed up successfully!");
   }
 
   return (

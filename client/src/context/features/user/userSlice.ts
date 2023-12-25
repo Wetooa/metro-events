@@ -21,10 +21,6 @@ export const fetchUser = createAsyncThunk(
   'user/fetchUser',
   async (name, { rejectWithValue }) => {
 
-    const localStorageSavedData = localStorage.getItem("userData");
-
-    if (localStorageSavedData) return JSON.parse(localStorageSavedData);
-
     const { data: authData, error: authError } = await supabase.auth.getUser();
     if (authError) return rejectWithValue(authError.message);
 
@@ -45,7 +41,6 @@ export const userSlice = createSlice({
     builder.addCase(fetchUser.fulfilled, (state, action) => {
       state.requestState = "fulfilled";
       state.user = action.payload;
-      localStorage.setItem("userData", JSON.stringify(action.payload));
     })
     builder.addCase(fetchUser.pending, (state) => {
       state.requestState = "pending";

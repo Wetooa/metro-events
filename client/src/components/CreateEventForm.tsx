@@ -4,19 +4,27 @@ import React, { FormEvent, useState } from "react";
 import Input from "./UI/Input";
 import Textarea from "./UI/Textarea";
 import Button from "./UI/Button";
-import { formEventToObject, handleSupabaseAsyncError } from "@/utils/utils";
+import { formEventToObject, handleAsyncFunction } from "@/utils/utils";
 import { supabase } from "@/utils/supabase";
+import { useAppSelector } from "@/context/hooks";
 
 function CreateEventForm() {
+  const { user } = useAppSelector((state) => state.user);
   const [isCreatingEvent, setIsCreatingEvent] = useState(false);
 
   async function handleCreateEvent(event: FormEvent) {
     event.preventDefault();
+    console.log(user);
+
     const inputs = formEventToObject(event);
 
-    await handleSupabaseAsyncError(() =>
-      supabase.rpc("create_event", { ...inputs })
-    );
+    await handleAsyncFunction(async () => {
+      if (!user) throw new Error("Must be signed in to create an event!");
+      if (user.privilege == "user")
+        throw new Error("User cannot create an event!");
+
+      await supabase.rpc("create_event", { ...inputs, organizer_id: user.id });
+    }, "Created event successfully!");
   }
 
   return (

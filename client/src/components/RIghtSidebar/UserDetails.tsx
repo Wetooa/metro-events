@@ -4,6 +4,7 @@ import React, { useEffect } from "react";
 import LoginForm from "../Login/LoginForm";
 import { useAppDispatch, useAppSelector } from "@/context/hooks";
 import { fetchUser } from "@/context/features/user/userSlice";
+import Logout from "../Logout";
 
 export default function UserDetails() {
   const { user } = useAppSelector((state) => state.user);
@@ -25,6 +26,8 @@ export default function UserDetails() {
             {user.firstname} {user.lastname}
           </p>
           <p>{user.address}</p>
+
+          <Logout />
         </>
       ) : (
         <>

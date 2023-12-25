@@ -1,7 +1,8 @@
 
+
 import clsx, { ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import {toast} from "react-toastify"
+import { toast } from "react-toastify"
 import { FormEvent } from "react";
 
 
@@ -9,17 +10,13 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-
-export async function handleSupabaseAsyncError<T extends () => any>(asyncFunc: T, successMessage?: string): Promise<ReturnType<T> | null> {
-  try { 
-    const result =  await asyncFunc();
-    if (!result || result.error) throw new Error(result.error.message);
+export async function handleAsyncFunction(asyncFunc: () => Promise<any>, successMessage?: string) {
+  try {
+    await asyncFunc();
     toast.success(successMessage ?? "Task was successful!");
-    return result;
-  } catch(error: any) {
+  } catch (error: any) {
     toast.error(`Error: ${error.message}`);
   }
-  return null;
 }
 
 
