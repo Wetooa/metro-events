@@ -1,4 +1,5 @@
 import Event from "@/components/Event";
+import AccountDetails from "@/components/ProfilePage/AccountDetails";
 import Link from "next/link";
 import React from "react";
 
@@ -11,31 +12,7 @@ export default function page() {
         </Link>
       </div>
 
-      <section className="relative">
-        {/* cover photo */}
-        <div className="w-full h-36 bg-slate-200"></div>
-
-        <div>
-          {/* profile photo */}
-          <div className="absolute top-20 left-5">
-            <div className="w-auto h-28 rounded-full aspect-square bg-slate-300"></div>
-          </div>
-
-          <div className="mt-16">
-            <h6>Fullname</h6>
-            <p>@username</p>
-            <p>tagline</p>
-
-            <div className="flex">
-              <p>Locaation</p>
-              <p>Birthday</p>
-              <p>Joined when</p>
-            </div>
-
-            <p>Number of followed events</p>
-          </div>
-        </div>
-      </section>
+      <AccountDetails />
 
       <section>
         <div className="flex justify-around h-16 border-b border-2-white/20">
@@ -45,11 +22,7 @@ export default function page() {
         </div>
 
         <section>
-          <Event />
-          <Event />
-          <Event />
-          <Event />
-          <Event />
+          {/* FOLLOWED EVENTS COMPONENT HERE (BUT DO REALTIME SHIT FIRST) */}
         </section>
       </section>
     </section>

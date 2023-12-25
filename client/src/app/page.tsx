@@ -1,5 +1,5 @@
 import CreateEventForm from "@/components/CreateEventForm";
-import Main from "@/components/EventsPage/Main";
+import Main from "@/components/EventsPage/AllEvents";
 
 export default function Home() {
   return (
