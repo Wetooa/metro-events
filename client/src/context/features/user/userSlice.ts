@@ -1,7 +1,7 @@
 "use client"
 
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import { supabase } from '@/utils/supabase';
+import { supabase } from '@/lib/supabase';
 import { UserProps } from '@/types/supabase.interface';
 
 

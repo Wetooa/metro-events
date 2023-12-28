@@ -1,12 +1,12 @@
 "use client";
 
-import React from "react";
-import Button from "./UI/Button";
+import React, { MouseEvent, MouseEventHandler } from "react";
 
 import { FaShareSquare, FaComment } from "react-icons/fa";
 import { AiFillLike, AiFillDislike } from "react-icons/ai";
 import { useRouter } from "next/navigation";
 import { GetAllEventsProps } from "@/types/supabase.interface";
+import { Button } from "./UI/Button";
 
 interface Event extends GetAllEventsProps {}
 
@@ -77,9 +77,8 @@ export default function Event({
             <Button
               key={index}
               className="rounded-full w-fit h-fit p-2"
-              variant={"subtle"}
-              isLoading={false}
-              onClick={(event) => {
+              variant={"default"}
+              onClick={(event: MouseEvent) => {
                 event.stopPropagation();
                 fc();
               }}

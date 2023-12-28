@@ -1,28 +1,31 @@
 "use client";
 
-import { supabase } from "@/utils/supabase";
+import { supabase } from "@/lib/supabase";
 import React from "react";
-import Button from "./UI/Button";
 import { useAppDispatch } from "@/context/hooks";
 import { fetchUser } from "@/context/features/user/userSlice";
-import { handleAsyncFunction } from "@/utils/utils";
 import { useRouter } from "next/navigation";
+import { useToast } from "./UI/Toast/use-toast";
+import { Button } from "./UI/Button";
 
 export default function Logout() {
+  const { toast } = useToast();
   const dispatch = useAppDispatch();
   const router = useRouter();
 
   async function handleLogout() {
-    await handleAsyncFunction(async () => {
+    try {
       await supabase.auth.signOut();
       dispatch(fetchUser());
+      toast({
+        title: "Logged Out",
+        description: "User logged out successfully",
+      });
       router.push("/");
-    }, "User logged out successfully!");
+    } catch (error: any) {
+      toast({ title: "Logout Error", description: error.message });
+    }
   }
 
-  return (
-    <Button isLoading={false} onClick={handleLogout}>
-      Logout
-    </Button>
-  );
+  return <Button onClick={handleLogout}>Logout</Button>;
 }

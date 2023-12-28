@@ -1,17 +1,19 @@
 "use client";
 
 import React, { FormEvent } from "react";
-import Input from "../UI/Input";
-import Textarea from "../UI/Textarea";
-import Button from "../UI/Button";
-import { supabase } from "@/utils/supabase";
-import { formEventToObject, handleAsyncFunction } from "@/utils/utils";
+import { supabase } from "@/lib/supabase";
+import { formEventToObject } from "@/lib/utils";
 import Link from "next/link";
 import { fetchUser } from "@/context/features/user/userSlice";
 import { useAppDispatch } from "@/context/hooks";
 import { useRouter } from "next/navigation";
+import { toast, useToast } from "../UI/Toast/use-toast";
+import { Input } from "../UI/Input";
+import Textarea from "../UI/Textarea";
+import { Button } from "../UI/Button";
 
 export default function RegisterForm() {
+  const { toast } = useToast();
   const dispatch = useAppDispatch();
   const router = useRouter();
 
@@ -21,7 +23,7 @@ export default function RegisterForm() {
     const inputs = formEventToObject(event);
     const { password, ...filteredInputs } = inputs;
 
-    await handleAsyncFunction(async () => {
+    try {
       await supabase.auth.signUp({
         email: inputs.email,
         password: inputs.password,
@@ -30,8 +32,14 @@ export default function RegisterForm() {
         },
       });
       dispatch(fetchUser());
+      toast({
+        title: "Register Success",
+        description: "User registered successfully!",
+      });
       router.push("/");
-    }, "User signed up successfully!");
+    } catch (error: any) {
+      toast({ title: "Register Error", description: error.message });
+    }
   }
 
   return (
@@ -50,7 +58,7 @@ export default function RegisterForm() {
 
         <Textarea name="info" />
 
-        <Button isLoading={false}>Register</Button>
+        <Button>Register</Button>
       </form>
 
       <div className="text-xs">

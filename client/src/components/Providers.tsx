@@ -3,7 +3,7 @@
 import { store } from "@/context/store";
 import React, { ReactNode } from "react";
 import { Provider } from "react-redux";
-import { ToastContainer } from "react-toastify";
+import { Toaster } from "./UI/Toast/Toaster";
 
 export default function Providers({
   children,
@@ -11,13 +11,7 @@ export default function Providers({
   return (
     <Provider store={store}>
       {children}
-
-      <ToastContainer
-        closeButton
-        draggable
-        theme="dark"
-        position="bottom-right"
-      />
+      <Toaster />
     </Provider>
   );
 }

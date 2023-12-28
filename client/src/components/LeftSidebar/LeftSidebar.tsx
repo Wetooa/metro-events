@@ -1,3 +1,4 @@
+import { ModeToggle } from "../NextTheme/ModeToggle";
 import LeftSidebarLink from "./LeftSidebarLink";
 
 export default function LeftSidebar() {
@@ -12,6 +13,8 @@ export default function LeftSidebar() {
         <LeftSidebarLink name={"bookmarks"} href={"/bookmarks"} />
         <LeftSidebarLink name={"messages"} href={"/messages"} />
       </ul>
+
+      <ModeToggle />
     </nav>
   );
 }

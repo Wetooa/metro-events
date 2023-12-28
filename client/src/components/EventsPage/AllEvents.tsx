@@ -2,10 +2,10 @@
 
 import React, { useEffect, useState } from "react";
 import Event from "../Event";
-import { supabase } from "@/utils/supabase";
+import { supabase } from "@/lib/supabase";
 import { useAppSelector } from "@/context/hooks";
 import { GetAllEventsProps } from "@/types/supabase.interface";
-import { useFetchEvent } from "@/utils/hooks";
+import { useFetchEvent } from "@/lib/hooks";
 
 export default function Main() {
   const events = useFetchEvent();

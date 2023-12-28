@@ -1,4 +1,4 @@
-import { cn } from "@/utils/utils";
+import { cn } from "@/lib/utils";
 import { VariantProps } from "class-variance-authority";
 import { TextareaHTMLAttributes } from "react";
 import { inputVariants } from "./Input";

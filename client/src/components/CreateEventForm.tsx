@@ -1,47 +1,55 @@
 "use client";
 
 import React, { FormEvent, useState } from "react";
-import Input from "./UI/Input";
 import Textarea from "./UI/Textarea";
-import Button from "./UI/Button";
-import { formEventToObject, handleAsyncFunction } from "@/utils/utils";
-import { supabase } from "@/utils/supabase";
+import { formEventToObject } from "@/lib/utils";
+import { supabase } from "@/lib/supabase";
 import { useAppSelector } from "@/context/hooks";
+import { useToast } from "./UI/Toast/use-toast";
+import { Input } from "./UI/Input";
+import { Button } from "./UI/Button";
+import { DatePicker } from "./UI/DatePicker";
 
 function CreateEventForm() {
+  const { toast } = useToast();
   const { user } = useAppSelector((state) => state.user);
   const [isCreatingEvent, setIsCreatingEvent] = useState(false);
 
   async function handleCreateEvent(event: FormEvent) {
     event.preventDefault();
-    console.log(user);
-
     const inputs = formEventToObject(event);
 
-    await handleAsyncFunction(async () => {
+    try {
       if (!user) throw new Error("Must be signed in to create an event!");
       if (user.privilege == "user")
         throw new Error("User cannot create an event!");
 
       await supabase.rpc("create_event", { ...inputs, organizer_id: user.id });
-    }, "Created event successfully!");
+      toast({
+        title: "Success!",
+        description: "Event was successfully created!",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error!",
+        description: error.message,
+      });
+    }
   }
 
   return (
-    // rough idea, make into nice drop down later
     <section className="w-full ">
       <div className={`p-2  transition-all ${!isCreatingEvent && "hidden"}`}>
         <h5>Create An Event</h5>
 
         <form onSubmit={handleCreateEvent} action="">
           <Input name="title" placeholder="ex. Hiking" />
-          <Input title="Date" name="date" type="date" />
+          {/* <Input title="Date" name="date" type="date" /> */}
+          <DatePicker />
           <Input name="location" placeholder="ex. Mt. Kammungay" type="" />
           <Textarea name="info" placeholder="ex. A hike to the woods" />
 
-          <Button isLoading={false} type="submit">
-            Create Event
-          </Button>
+          <Button type="submit">Create Event</Button>
         </form>
       </div>
 

@@ -1,25 +1,26 @@
 "use client";
 
 import { FormEvent } from "react";
-import Button from "../UI/Button";
-import Input from "../UI/Input";
-import { supabase } from "@/utils/supabase";
-import { formEventToObject, handleAsyncFunction } from "@/utils/utils";
+import { supabase } from "@/lib/supabase";
+import { formEventToObject } from "@/lib/utils";
 import Link from "next/link";
 import { fetchUser } from "@/context/features/user/userSlice";
 import { useAppDispatch } from "@/context/hooks";
 import { useRouter } from "next/navigation";
+import { toast, useToast } from "../UI/Toast/use-toast";
+import { Button } from "../UI/Button";
+import { Input } from "../UI/Input";
 
 export default function LoginForm() {
+  const { toast } = useToast();
   const dispatch = useAppDispatch();
   const router = useRouter();
 
   async function handleLogin(event: FormEvent) {
     event.preventDefault();
-
     const inputs = formEventToObject(event);
 
-    await handleAsyncFunction(async () => {
+    try {
       await supabase.auth.signInWithPassword({
         email: inputs.email,
         password: inputs.password,
@@ -28,8 +29,14 @@ export default function LoginForm() {
         },
       });
       dispatch(fetchUser());
+      toast({
+        title: "Login Sucess",
+        description: "User logged in successfully!",
+      });
       router.push("/");
-    }, "User logged up successfully!");
+    } catch (error: any) {
+      toast({ title: "Login Error", description: error.message });
+    }
   }
 
   return (
@@ -38,7 +45,7 @@ export default function LoginForm() {
         <Input name="email" />
         <Input name="password" type="password" />
 
-        <Button isLoading={false}>Login</Button>
+        <Button>Login</Button>
       </form>
 
       <div className="text-xs">

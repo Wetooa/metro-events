@@ -1,4 +1,3 @@
-import Event from "@/components/Event";
 import AccountDetails from "@/components/ProfilePage/AccountDetails";
 import Link from "next/link";
 import React from "react";
