@@ -1,22 +1,25 @@
-"use client";
-
+import BackToHomeButton from "@/components/BackToHomeButton";
 import AllEvents from "@/components/EventsPage/AllEvents";
 import { Badge } from "@/components/UI/Badge";
-import { Button } from "@/components/UI/Button";
+import { Skeleton } from "@/components/UI/Skeleton";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/UI/Tabs";
-import { useAppSelector } from "@/context/hooks";
-import { ChevronLeftIcon } from "@radix-ui/react-icons";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import React from "react";
+import { supabase } from "@/lib/supabase";
+import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
+import { useRouter } from "next/router";
+import React, { useState } from "react";
 
-export default function Profile() {
-  const { user } = useAppSelector((state) => state.user);
-  const router = useRouter();
+async function fetchProfile(id: string) {
+  const { data, error } = await supabase.rpc("get_user", { user_id_input: id });
+  return error ? null : data[0];
+}
 
-  if (user == null) {
-    router.push("/login");
-    return <></>;
+export default async function Profile({ params }: GetServerSidePropsContext) {
+  if (!params || typeof params.id !== "string") return <Skeleton />;
+
+  const user = await fetchProfile(params.id);
+
+  if (!user) {
+    return <Skeleton />;
   }
 
   const {
@@ -33,13 +36,7 @@ export default function Profile() {
 
   return (
     <section>
-      <div>
-        <Link href={"/"} className="">
-          <Button variant={"link"}>
-            <ChevronLeftIcon /> Back
-          </Button>
-        </Link>
-      </div>
+      <BackToHomeButton />
 
       <section className="relative">
         {/* cover photo */}

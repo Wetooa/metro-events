@@ -1,3 +1,5 @@
+"use client";
+
 import { ModeToggle } from "../NextTheme/ModeToggle";
 import {
   HomeIcon,
@@ -7,8 +9,11 @@ import {
   ChatBubbleIcon,
 } from "@radix-ui/react-icons";
 import LeftSidebarLink from "./LeftSidebarLink";
+import { useAppSelector } from "@/context/hooks";
 
 export default function LeftSidebar() {
+  const { user } = useAppSelector((state) => state.user);
+
   return (
     <nav className="h-screen">
       <h2 className="w-full text-center">Metro Events</h2>
@@ -25,7 +30,7 @@ export default function LeftSidebar() {
           Icon={PersonIcon}
           tooltip="See your profile"
           name={"profile"}
-          href={"/profile"}
+          href={`/profile/${user?.id}`}
         />
         <LeftSidebarLink
           Icon={BellIcon}

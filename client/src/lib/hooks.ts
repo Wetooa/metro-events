@@ -18,5 +18,6 @@ export function useFetchEvent() {
     fetchEvents();
   }, [user]);
 
+
   return events;
 }

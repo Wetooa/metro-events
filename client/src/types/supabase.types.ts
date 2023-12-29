@@ -329,6 +329,23 @@ export interface Database {
         }
         Returns: undefined
       }
+      comment_on_comment: {
+        Args: {
+          event_id: string
+          user_id: string
+          comment_id: string
+          comment: string
+        }
+        Returns: undefined
+      }
+      comment_on_event: {
+        Args: {
+          event_id: string
+          user_id: string
+          comment: string
+        }
+        Returns: undefined
+      }
       create_event: {
         Args: {
           title: string
@@ -403,6 +420,7 @@ export interface Database {
           upvotes: number
           downvotes: number
           is_voted: number
+          comments_count: number
           is_cancelled: boolean
         }[]
       }
@@ -435,6 +453,7 @@ export interface Database {
           upvotes: number
           downvotes: number
           is_voted: number
+          comments_count: number
           is_cancelled: boolean
         }[]
       }
@@ -457,7 +476,6 @@ export interface Database {
       }
       get_votes: {
         Args: {
-          event_id_input: string
           user_id_input?: string
         }
         Returns: {
