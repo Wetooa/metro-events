@@ -4,7 +4,7 @@ import WhatsHappening from "./WhatsHappening";
 
 export default function RightSidebar() {
   return (
-    <aside className="border-l border-white/20 w-72 sticky right-0 top-0">
+    <aside className="h-screen">
       <SearchBar />
       <UserDetails />
       <WhatsHappening />

@@ -1,31 +1,24 @@
-import { cn } from "@/lib/utils";
-import { VariantProps } from "class-variance-authority";
-import { TextareaHTMLAttributes } from "react";
-import { inputVariants } from "./Input";
+import * as React from "react"
 
-interface TextareaProps
-  extends TextareaHTMLAttributes<HTMLTextAreaElement>,
-    VariantProps<typeof inputVariants> {
-  title?: string;
-}
+import { cn } from "@/lib/utils"
 
-export default function Textarea({
-  title,
-  variant,
-  sizeVariant,
-  className,
-  ...props
-}: Readonly<TextareaProps>) {
-  const name = props.name ?? "";
-  title = title ?? name?.substring(0, 1).toUpperCase() + name?.substring(1);
+export interface TextareaProps
+  extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {}
 
-  return (
-    <>
-      <label htmlFor={props.name}>{title}</label>
+const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
+  ({ className, ...props }, ref) => {
+    return (
       <textarea
-        className={cn(variant, sizeVariant, className)}
+        className={cn(
+          "flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+          className
+        )}
+        ref={ref}
         {...props}
-      ></textarea>
-    </>
-  );
-}
+      />
+    )
+  }
+)
+Textarea.displayName = "Textarea"
+
+export { Textarea }

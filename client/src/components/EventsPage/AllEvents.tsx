@@ -1,13 +1,11 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Event from "../Event";
 import { supabase } from "@/lib/supabase";
-import { useAppSelector } from "@/context/hooks";
-import { GetAllEventsProps } from "@/types/supabase.interface";
 import { useFetchEvent } from "@/lib/hooks";
 
-export default function Main() {
+export default function AllEvents() {
   const events = useFetchEvent();
 
   const eventChannel = supabase

@@ -1,8 +1,19 @@
+"use client";
+
+import AllEvents from "@/components/EventsPage/AllEvents";
 import AccountDetails from "@/components/ProfilePage/AccountDetails";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/UI/tabs";
+import { useAppSelector } from "@/context/hooks";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React from "react";
 
-export default function page() {
+export default function Profile() {
+  const { user } = useAppSelector((state) => state.user);
+  const router = useRouter();
+
+  if (!user) router.push("/login");
+
   return (
     <section>
       <div>
@@ -13,17 +24,25 @@ export default function page() {
 
       <AccountDetails />
 
-      <section>
-        <div className="flex justify-around h-16 border-b border-2-white/20">
-          <button className="">Followed Events</button>
-          <button className="">Comments</button>
-          <button className="">Likes</button>
-        </div>
-
-        <section>
-          {/* FOLLOWED EVENTS COMPONENT HERE (BUT DO REALTIME SHIT FIRST) */}
-        </section>
-      </section>
+      <Tabs defaultValue="following" className="w-full">
+        <TabsList>
+          <TabsTrigger value="following">Following</TabsTrigger>
+          <TabsTrigger value="comments">Comments</TabsTrigger>
+          <TabsTrigger value="links">Likes</TabsTrigger>
+        </TabsList>
+        <TabsContent value="following">
+          {/* main shet */}
+          <AllEvents />
+        </TabsContent>
+        <TabsContent value="comments">
+          {/* main shet */}
+          <AllEvents />
+        </TabsContent>
+        <TabsContent value="likes">
+          {/* main shet */}
+          <AllEvents />
+        </TabsContent>
+      </Tabs>
     </section>
   );
 }

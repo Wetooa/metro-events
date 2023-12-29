@@ -12,3 +12,4 @@ This project was built using **NextJS** alongside with **Tailwind CSS** and **Sh
 - Tailwind CSS
 - Supabase
 - Shadcn UI
+- Redux Toolkit

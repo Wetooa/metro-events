@@ -1,6 +1,6 @@
 "use client";
 
-import React, { MouseEvent, MouseEventHandler } from "react";
+import React, { MouseEvent } from "react";
 
 import { FaShareSquare, FaComment } from "react-icons/fa";
 import { AiFillLike, AiFillDislike } from "react-icons/ai";

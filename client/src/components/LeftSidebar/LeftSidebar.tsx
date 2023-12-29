@@ -3,7 +3,7 @@ import LeftSidebarLink from "./LeftSidebarLink";
 
 export default function LeftSidebar() {
   return (
-    <nav className="h-full border-r border-white/20 w-72 sticky left-0 top-0">
+    <nav className="h-screen">
       <h3 className="w-full text-center">Metro Events</h3>
 
       <ul className="flex flex-col">

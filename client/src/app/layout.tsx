@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
-import LeftSidebar from "@/components/LeftSidebar/LeftSidebar";
-import RightSidebar from "@/components/RightSidebar/RightSidebar";
 import { cn } from "@/lib/utils";
 import "./globals.css";
 import { Inter as FontSans } from "next/font/google";
 import { ThemeProvider } from "@/components/NextTheme/ThemeProvider";
 import Providers from "@/components/Providers";
+import SharedLayout from "@/components/SharedLayout";
 
 export const metadata: Metadata = {
   title: "Metro Events",
@@ -23,8 +22,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="flex justify-center">
-      <body className={cn(fontSans.className)}>
+    <html lang="en" suppressHydrationWarning>
+      <body className={cn(fontSans.className, "flex justify-center")}>
         <Providers>
           <ThemeProvider
             attribute="class"
@@ -32,10 +31,8 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <div className={"flex min-h-screen max-w-7xl relative"}>
-              <LeftSidebar />
-              <div className="flex-1 w-screen">{children}</div>
-              <RightSidebar />
+            <div className={"min-h-screen w-screen relative"}>
+              <SharedLayout>{children}</SharedLayout>
             </div>
           </ThemeProvider>
         </Providers>

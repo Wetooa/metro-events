@@ -1,36 +1,96 @@
 "use client";
 
-import React, { FormEvent } from "react";
+import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import React from "react";
 import { supabase } from "@/lib/supabase";
-import { formEventToObject } from "@/lib/utils";
 import Link from "next/link";
 import { fetchUser } from "@/context/features/user/userSlice";
 import { useAppDispatch } from "@/context/hooks";
 import { useRouter } from "next/navigation";
-import { toast, useToast } from "../UI/Toast/use-toast";
+import { useToast } from "../UI/Toast/use-toast";
 import { Input } from "../UI/Input";
-import Textarea from "../UI/Textarea";
 import { Button } from "../UI/Button";
+import { Textarea } from "../UI/Textarea";
+import { useForm } from "react-hook-form";
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormDescription,
+  FormMessage,
+} from "../UI/Form";
+import { DatePicker } from "../UI/DatePicker";
+import { Label } from "../UI/Label";
+
+const registerFormSchema = z
+  .object({
+    firstname: z
+      .string()
+      .min(2, { message: "Firstname must be at least 2 characters long" })
+      .max(25, { message: "Firstname must be at most 25 characters long" }),
+    lastname: z
+      .string()
+      .min(2, { message: "Lastname must be at least 2 characters long" })
+      .max(25, { message: "Lastname must be at most 25 characters long" }),
+    username: z
+      .string()
+      .min(2, { message: "Username must be at least 2 characters long" })
+      .max(50, { message: "Username must be at most 50 characters long" }),
+    birthday: z.string(),
+    address: z
+      .string()
+      .min(2, { message: "Address must be at least 2 characters long" })
+      .max(50, { message: "Address must be at most 50 characters long" }),
+    email: z.string().email(),
+    password: z
+      .string()
+      .min(2, { message: "Password must be at least 2 characters long" })
+      .max(20, { message: "Password must be at most 20 characters long" }),
+    confirm: z
+      .string()
+      .min(2, { message: "Username must be at least 2 characters long" })
+      .max(20, { message: "Username must be at most 20 characters long" }),
+  })
+  .required()
+  .refine((data) => data.password === data.confirm, {
+    message: "Passwords don't match",
+    path: ["confirm"],
+  });
 
 export default function RegisterForm() {
   const { toast } = useToast();
   const dispatch = useAppDispatch();
   const router = useRouter();
 
-  async function handleRegister(event: FormEvent) {
-    event.preventDefault();
+  const registerForm = useForm<z.infer<typeof registerFormSchema>>({
+    resolver: zodResolver(registerFormSchema),
+    defaultValues: {
+      firstname: "",
+      lastname: "",
+      username: "",
+      birthday: Date.now().toString(),
+      address: "",
+      email: "",
+      password: "",
+      confirm: "",
+    },
+  });
 
-    const inputs = formEventToObject(event);
-    const { password, ...filteredInputs } = inputs;
-
+  async function handleRegister(values: z.infer<typeof registerFormSchema>) {
+    const { password, confirm, ...filteredInputs } = values;
     try {
-      await supabase.auth.signUp({
-        email: inputs.email,
-        password: inputs.password,
+      const { error } = await supabase.auth.signUp({
+        email: values.email,
+        password: values.password,
         options: {
           data: filteredInputs,
         },
       });
+      if (error) throw new Error(error.message);
+
       dispatch(fetchUser());
       toast({
         title: "Register Success",
@@ -46,20 +106,146 @@ export default function RegisterForm() {
     <section className="p-4">
       <h4>Register</h4>
 
-      <form action="" onSubmit={handleRegister}>
-        <Input name="firstname" />
-        <Input name="lastname" />
-        <Input name="username" />
-        <Input name="birthday" type="date" />
-        <Input name="address" />
-
-        <Input name="email" type="email" />
-        <Input name="password" type="password" />
-
-        <Textarea name="info" />
-
-        <Button>Register</Button>
-      </form>
+      <Form {...registerForm}>
+        <form
+          onSubmit={registerForm.handleSubmit(handleRegister)}
+          className="space-y-8 mt-5"
+        >
+          <div className="flex gap-2">
+            <FormField
+              control={registerForm.control}
+              name="firstname"
+              render={({ field }) => (
+                <FormItem>
+                  <FormItem>
+                    <FormLabel>Firstname</FormLabel>
+                    <FormControl>
+                      <Input autoFocus placeholder="ex. Adrian" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={registerForm.control}
+              name="lastname"
+              render={({ field }) => (
+                <FormItem>
+                  <FormItem>
+                    <FormLabel>Lastname</FormLabel>
+                    <FormControl>
+                      <Input placeholder="ex. Sajulga" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                </FormItem>
+              )}
+            />
+          </div>
+          <FormField
+            control={registerForm.control}
+            name="username"
+            render={({ field }) => (
+              <FormItem>
+                <FormItem>
+                  <FormLabel>Username</FormLabel>
+                  <FormControl>
+                    <Input placeholder="ex. Wetooa" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={registerForm.control}
+            name="birthday"
+            render={({ field }) => (
+              <FormItem>
+                <FormItem>
+                  <FormLabel>Birthday</FormLabel>
+                  <FormControl>
+                    <Input type="date" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={registerForm.control}
+            name="address"
+            render={({ field }) => (
+              <FormItem>
+                <FormItem>
+                  <FormLabel>Address</FormLabel>
+                  <FormControl>
+                    <Input placeholder="ex. Minglanilla Cebu" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={registerForm.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="email"
+                      placeholder="ex. derpykidyt@gmail.com"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              </FormItem>
+            )}
+          />
+          <div className="flex gap-2">
+            <FormField
+              control={registerForm.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <Input type="password" placeholder="" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={registerForm.control}
+              name="confirm"
+              render={({ field }) => (
+                <FormItem>
+                  <FormItem>
+                    <FormLabel>Confirm</FormLabel>
+                    <FormControl>
+                      <Input type="password" placeholder="" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                </FormItem>
+              )}
+            />
+          </div>
+          <Label>
+            {/* terms and conditions or smth */}I accept the{" "}
+            <Link href={"/"}>Terms and Conditions</Link>
+          </Label>
+          <Button type="submit">Register</Button>
+        </form>
+      </Form>
 
       <div className="text-xs">
         Already have an account?{" "}

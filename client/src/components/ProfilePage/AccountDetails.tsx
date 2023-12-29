@@ -1,13 +1,9 @@
 "use client";
 
 import { useAppSelector } from "@/context/hooks";
-import { useRouter } from "next/navigation";
 
 export default function AccountDetails() {
   const { user } = useAppSelector((state) => state.user);
-  const router = useRouter();
-
-  if (!user) router.push("/");
 
   const {
     firstname,

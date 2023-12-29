@@ -1,19 +1,26 @@
 import CreateEventForm from "@/components/CreateEventForm";
-import Main from "@/components/EventsPage/AllEvents";
+import AllEvents from "@/components/EventsPage/AllEvents";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/UI/Tabs";
 
 export default function Home() {
   return (
     <main className="w-full ">
-      <section className="flex justify-around h-16 border-b border-2-white/20">
-        <button className="">All Events</button>
-        <button className="">Following</button>
-      </section>
-
-      {/* only if organizer */}
       <CreateEventForm />
 
-      {/* main shet */}
-      <Main />
+      <Tabs defaultValue="allEvents" className="w-full">
+        <TabsList>
+          <TabsTrigger value="allEvents">All Events</TabsTrigger>
+          <TabsTrigger value="following">Following</TabsTrigger>
+        </TabsList>
+        <TabsContent value="allEvents">
+          {/* main shet */}
+          <AllEvents />
+        </TabsContent>
+        <TabsContent value="following">
+          {/* main shet */}
+          <AllEvents />
+        </TabsContent>
+      </Tabs>
     </main>
   );
 }
