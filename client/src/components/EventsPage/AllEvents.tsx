@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import Event from "../Event";
+import EventCard from "../EventCard";
 import { supabase } from "@/lib/supabase";
 import { useFetchEvent } from "@/lib/hooks";
 
@@ -22,7 +22,7 @@ export default function AllEvents() {
   return (
     <main>
       {events.map((event) => {
-        return <Event key={event.id} {...event} />;
+        return <EventCard key={event.id} {...event} />;
       })}
     </main>
   );

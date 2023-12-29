@@ -24,6 +24,7 @@ import {
 } from "../UI/Form";
 import { DatePicker } from "../UI/DatePicker";
 import { Label } from "../UI/Label";
+import { Separator } from "../UI/separator";
 
 const registerFormSchema = z
   .object({
@@ -44,6 +45,10 @@ const registerFormSchema = z
       .string()
       .min(2, { message: "Address must be at least 2 characters long" })
       .max(50, { message: "Address must be at most 50 characters long" }),
+    info: z
+      .string()
+      .min(2, { message: "Info must be at least 2 characters long" })
+      .max(300, { message: "Info must not exceed 300 character limit" }),
     email: z.string().email(),
     password: z
       .string()
@@ -103,45 +108,49 @@ export default function RegisterForm() {
   }
 
   return (
-    <section className="p-4">
-      <h4>Register</h4>
+    <section className="p-4 space-y-4 pb-10">
+      <h3>Register</h3>
 
       <Form {...registerForm}>
         <form
           onSubmit={registerForm.handleSubmit(handleRegister)}
           className="space-y-8 mt-5"
         >
-          <div className="flex gap-2">
-            <FormField
-              control={registerForm.control}
-              name="firstname"
-              render={({ field }) => (
-                <FormItem>
+          <div className="flex gap-2 w-full">
+            <div className="flex-1">
+              <FormField
+                control={registerForm.control}
+                name="firstname"
+                render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Firstname</FormLabel>
-                    <FormControl>
-                      <Input autoFocus placeholder="ex. Adrian" {...field} />
-                    </FormControl>
-                    <FormMessage />
+                    <FormItem>
+                      <FormLabel>Firstname</FormLabel>
+                      <FormControl>
+                        <Input autoFocus placeholder="ex. Adrian" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
                   </FormItem>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={registerForm.control}
-              name="lastname"
-              render={({ field }) => (
-                <FormItem>
+                )}
+              />
+            </div>
+            <div className="flex-1">
+              <FormField
+                control={registerForm.control}
+                name="lastname"
+                render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Lastname</FormLabel>
-                    <FormControl>
-                      <Input placeholder="ex. Sajulga" {...field} />
-                    </FormControl>
-                    <FormMessage />
+                    <FormItem>
+                      <FormLabel>Lastname</FormLabel>
+                      <FormControl>
+                        <Input placeholder="ex. Sajulga" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
                   </FormItem>
-                </FormItem>
-              )}
-            />
+                )}
+              />
+            </div>
           </div>
           <FormField
             control={registerForm.control}
@@ -158,6 +167,7 @@ export default function RegisterForm() {
               </FormItem>
             )}
           />
+          <Separator />
           <FormField
             control={registerForm.control}
             name="birthday"
@@ -190,6 +200,22 @@ export default function RegisterForm() {
           />
           <FormField
             control={registerForm.control}
+            name="info"
+            render={({ field }) => (
+              <FormItem>
+                <FormItem>
+                  <FormLabel>Info</FormLabel>
+                  <FormControl>
+                    <Textarea placeholder="ex. Minglanilla Cebu" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              </FormItem>
+            )}
+          />
+          <Separator />
+          <FormField
+            control={registerForm.control}
             name="email"
             render={({ field }) => (
               <FormItem>
@@ -207,37 +233,41 @@ export default function RegisterForm() {
               </FormItem>
             )}
           />
-          <div className="flex gap-2">
-            <FormField
-              control={registerForm.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
+          <div className="flex gap-2 w-full">
+            <div className="flex-1">
+              <FormField
+                control={registerForm.control}
+                name="password"
+                render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
-                    <FormControl>
-                      <Input type="password" placeholder="" {...field} />
-                    </FormControl>
-                    <FormMessage />
+                    <FormItem>
+                      <FormLabel>Password</FormLabel>
+                      <FormControl>
+                        <Input type="password" placeholder="" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
                   </FormItem>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={registerForm.control}
-              name="confirm"
-              render={({ field }) => (
-                <FormItem>
+                )}
+              />
+            </div>
+            <div className="flex-1">
+              <FormField
+                control={registerForm.control}
+                name="confirm"
+                render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Confirm</FormLabel>
-                    <FormControl>
-                      <Input type="password" placeholder="" {...field} />
-                    </FormControl>
-                    <FormMessage />
+                    <FormItem>
+                      <FormLabel>Confirm</FormLabel>
+                      <FormControl>
+                        <Input type="password" placeholder="" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
                   </FormItem>
-                </FormItem>
-              )}
-            />
+                )}
+              />
+            </div>
           </div>
           <Label>
             {/* terms and conditions or smth */}I accept the{" "}
@@ -246,6 +276,8 @@ export default function RegisterForm() {
           <Button type="submit">Register</Button>
         </form>
       </Form>
+
+      <Separator />
 
       <div className="text-xs">
         Already have an account?{" "}

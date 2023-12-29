@@ -5,6 +5,14 @@ import LoginForm from "../Login/LoginForm";
 import { useAppDispatch, useAppSelector } from "@/context/hooks";
 import { fetchUser } from "@/context/features/user/userSlice";
 import Logout from "../Logout";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "../UI/Card";
 
 export default function UserDetails() {
   const { user } = useAppSelector((state) => state.user);
@@ -16,26 +24,26 @@ export default function UserDetails() {
   }, [dispatch]);
 
   return (
-    <section className="m-2 p-2 bg-white/10 rounded-lg">
+    <Card className="m-2">
       {user ? (
         <>
-          <h4 className="">{user.username}</h4>
-
-          <p>{user.privilege}</p>
-          <p>
-            {user.firstname} {user.lastname}
-          </p>
-          <p>{user.address}</p>
-
-          <Logout />
+          <CardHeader>
+            <CardTitle>Hello {user.username}!</CardTitle>
+            <CardDescription>{user.privilege}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p>{user.info}</p>
+          </CardContent>
+          <CardFooter>
+            <Logout />
+          </CardFooter>
         </>
       ) : (
-        <>
-          <h4>Join now</h4>
-
+        <section className="px-2 pb-4">
+          <h3>Join Now</h3>
           <LoginForm />
-        </>
+        </section>
       )}
-    </section>
+    </Card>
   );
 }

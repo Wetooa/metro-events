@@ -1,23 +1,48 @@
-import React from "react";
+import React, { ReactSVGElement } from "react";
 import Link, { LinkProps } from "next/link";
+import {
+  TooltipProvider,
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@radix-ui/react-tooltip";
+import { Button } from "../UI/Button";
+import { IconProps } from "@radix-ui/react-icons/dist/types";
 
 interface LeftSidebarLinkProps extends LinkProps {
   name: string;
+  tooltip: string;
+  Icon: React.ForwardRefExoticComponent<
+    IconProps & React.RefAttributes<SVGSVGElement>
+  >;
 }
 
 export default function LeftSidebarLink({
   name,
+  tooltip,
+  Icon,
   ...props
 }: Readonly<LeftSidebarLinkProps>) {
   return (
     <Link
       {...props}
-      className="group/link hover:bg-black/20 w-full py-2 flex justify-center transition-all"
+      className="hover:bg-black/20 w-full py-2 flex justify-center transition-all"
     >
-      <p>{name}</p>
-      {/* <span className="transition-all group/link hidden group-hover/link:absolute left-20">
-            testing
-          </span> */}
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button variant={"link"}>
+              <Icon />{" "}
+              <span className="ml-2">
+                {name[0].toUpperCase() + name.substring(1)}
+              </span>
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{tooltip}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
     </Link>
   );
 }

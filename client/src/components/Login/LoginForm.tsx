@@ -20,6 +20,7 @@ import { toast, useToast } from "../UI/Toast/use-toast";
 import { Button } from "../UI/Button";
 import { Input } from "../UI/Input";
 import { useForm } from "react-hook-form";
+import { Separator } from "../UI/Separator";
 
 const loginFormSchema = z
   .object({
@@ -59,18 +60,18 @@ export default function LoginForm() {
         title: "Login Success",
         description: "User logged in successfully!",
       });
-      router.push("/");
+      router.back();
     } catch (error: any) {
       toast({ title: "Login Error", description: error.message });
     }
   }
 
   return (
-    <section>
+    <section className="space-y-4">
       <Form {...loginForm}>
         <form
           onSubmit={loginForm.handleSubmit(handleLogin)}
-          className="space-y-8 mt-5"
+          className="space-y-4 mt-5"
         >
           <FormField
             control={loginForm.control}
@@ -110,6 +111,8 @@ export default function LoginForm() {
           <Button type="submit">Login</Button>
         </form>
       </Form>
+
+      <Separator />
 
       <div className="text-xs">
         Don&apos;t have an account?{" "}

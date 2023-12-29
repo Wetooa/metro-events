@@ -14,7 +14,7 @@ export default function SharedLayout({
 }: Readonly<{ children: ReactNode }>) {
   return (
     <ResizablePanelGroup className="w-full" direction="horizontal">
-      <ResizablePanel className="">
+      <ResizablePanel defaultSize={20} className="">
         <LeftSidebar />
       </ResizablePanel>
 
@@ -22,7 +22,7 @@ export default function SharedLayout({
       <ResizablePanel>{children}</ResizablePanel>
       <ResizableHandle />
 
-      <ResizablePanel>
+      <ResizablePanel defaultSize={20}>
         <RightSidebar />
       </ResizablePanel>
     </ResizablePanelGroup>

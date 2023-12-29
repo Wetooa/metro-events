@@ -14,6 +14,7 @@ export interface Database {
           comment: string | null
           comment_id: string | null
           created_at: string | null
+          event_id: string
           id: string
           user_id: string | null
         }
@@ -21,6 +22,7 @@ export interface Database {
           comment?: string | null
           comment_id?: string | null
           created_at?: string | null
+          event_id: string
           id?: string
           user_id?: string | null
         }
@@ -28,10 +30,18 @@ export interface Database {
           comment?: string | null
           comment_id?: string | null
           created_at?: string | null
+          event_id?: string
           id?: string
           user_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "comments_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "fk_comments_comment_id"
             columns: ["comment_id"]
@@ -352,6 +362,56 @@ export interface Database {
         }
         Returns: undefined
       }
+      get_comment_comments:
+        | {
+            Args: {
+              comment_id_input: string
+            }
+            Returns: Database["public"]["CompositeTypes"]["comments_type"][]
+          }
+        | {
+            Args: {
+              event_id: string
+              user_id: string
+              comment: string
+            }
+            Returns: undefined
+          }
+        | {
+            Args: {
+              event_id: string
+              user_id: string
+              comment_id: string
+              comment: string
+            }
+            Returns: undefined
+          }
+      get_event: {
+        Args: {
+          event_id_input: string
+          user_id_input?: string
+        }
+        Returns: {
+          id: string
+          organizer_id: string
+          organizer_name: string
+          title: string
+          info: string
+          location: string
+          date: string
+          created_at: string
+          upvotes: number
+          downvotes: number
+          is_voted: number
+          is_cancelled: boolean
+        }[]
+      }
+      get_event_comments: {
+        Args: {
+          event_id_input: string
+        }
+        Returns: Database["public"]["CompositeTypes"]["comments_type"][]
+      }
       get_event_members: {
         Args: {
           event_id_input: string
@@ -429,14 +489,6 @@ export interface Database {
         }
         Returns: undefined
       }
-      vote_event: {
-        Args: {
-          user_id: string
-          event_id: string
-          is_like: boolean
-        }
-        Returns: undefined
-      }
     }
     Enums: {
       privilege_type: "admin" | "organizer" | "user"
@@ -444,11 +496,12 @@ export interface Database {
     CompositeTypes: {
       comments_type: {
         id: string
-        user_id: string
-        username: string
-        created_at: string
-        comment: string
+        event_id: string
         comment_id: string
+        user_id: string
+        commenter_name: string
+        comment: string
+        created_at: string
       }
       event_members_type: {
         id: string
