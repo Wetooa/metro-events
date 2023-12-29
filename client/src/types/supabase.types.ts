@@ -104,6 +104,7 @@ export interface Database {
           date: string | null
           id: string
           info: string | null
+          is_cancelled: boolean | null
           location: string | null
           organizer_id: string | null
           title: string | null
@@ -113,6 +114,7 @@ export interface Database {
           date?: string | null
           id?: string
           info?: string | null
+          is_cancelled?: boolean | null
           location?: string | null
           organizer_id?: string | null
           title?: string | null
@@ -122,6 +124,7 @@ export interface Database {
           date?: string | null
           id?: string
           info?: string | null
+          is_cancelled?: boolean | null
           location?: string | null
           organizer_id?: string | null
           title?: string | null
@@ -296,58 +299,69 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
-      create_event:
-        | {
-            Args: {
-              title: string
-              date: string
-              location: string
-              info: string
-              organizer_id: string
-            }
-            Returns: {
-              address: string | null
-              birthday: string | null
-              created_at: string
-              email: string
-              firstname: string | null
-              id: string
-              info: string | null
-              lastname: string | null
-              privilege: Database["public"]["Enums"]["privilege_type"]
-              username: string
-            }[]
-          }
-        | {
-            Args: {
-              title: string
-              date: string
-              location: string
-              info: string
-              organizer_id: string
-            }
-            Returns: {
-              address: string | null
-              birthday: string | null
-              created_at: string
-              email: string
-              firstname: string | null
-              id: string
-              info: string | null
-              lastname: string | null
-              privilege: Database["public"]["Enums"]["privilege_type"]
-              username: string
-            }[]
-          }
+      accept_request_to_be_organizer: {
+        Args: {
+          user_id: string
+        }
+        Returns: undefined
+      }
+      accept_request_to_join_event: {
+        Args: {
+          user_id: string
+          event_id: string
+          acceptor_id?: string
+        }
+        Returns: undefined
+      }
+      cancel_event: {
+        Args: {
+          event_id: string
+        }
+        Returns: undefined
+      }
+      create_event: {
+        Args: {
+          title: string
+          date: string
+          location: string
+          info: string
+          organizer_id: string
+        }
+        Returns: {
+          address: string | null
+          birthday: string | null
+          created_at: string
+          email: string
+          firstname: string | null
+          id: string
+          info: string | null
+          lastname: string | null
+          privilege: Database["public"]["Enums"]["privilege_type"]
+          username: string
+        }[]
+      }
+      delete_event: {
+        Args: {
+          event_id: string
+        }
+        Returns: undefined
+      }
       delete_user: {
         Args: {
           user_id_input: string
         }
         Returns: undefined
       }
+      get_event_members: {
+        Args: {
+          event_id_input: string
+        }
+        Returns: Database["public"]["CompositeTypes"]["event_members_type"][]
+      }
       get_events: {
         Args: {
           user_id_input?: string
+          only_followed?: boolean
         }
         Returns: {
           id: string
@@ -361,6 +375,7 @@ export interface Database {
           upvotes: number
           downvotes: number
           is_voted: number
+          is_cancelled: boolean
         }[]
       }
       get_user: {
@@ -380,21 +395,60 @@ export interface Database {
           username: string
         }[]
       }
+      get_votes: {
+        Args: {
+          event_id_input: string
+          user_id_input?: string
+        }
+        Returns: {
+          event_id: string
+          upvotes: number
+          downvotes: number
+          is_voted: number
+        }[]
+      }
+      request_to_be_organizer: {
+        Args: {
+          user_id: string
+          message: string
+        }
+        Returns: undefined
+      }
+      request_to_join_event: {
+        Args: {
+          user_id: string
+          event_id: string
+          message: string
+        }
+        Returns: undefined
+      }
+      unfollow_event: {
+        Args: {
+          user_id: string
+          event_id: string
+        }
+        Returns: undefined
+      }
+      vote_event: {
+        Args: {
+          user_id: string
+          event_id: string
+          is_like: boolean
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       privilege_type: "admin" | "organizer" | "user"
     }
     CompositeTypes: {
-      event_members_return_type: {
+      comments_type: {
         id: string
-        organizer_id: string
+        user_id: string
+        username: string
         created_at: string
-        title: string
-        location: string
-        date: string
-        info: string
-        event_id: string
-        members: unknown
+        comment: string
+        comment_id: string
       }
       event_members_type: {
         id: string
