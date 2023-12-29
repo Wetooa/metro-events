@@ -98,13 +98,35 @@ export default function EventCard({
   async function handleLikeEvent() {
     try {
       if (!user) throw new Error("User must authenticated to like a post!");
-    } catch (error: any) {}
+
+      if (is_voted && is_voted !== 1) {
+        await supabase
+          .from("votes")
+          .update({ is_like: true })
+          .eq("event_id", id)
+          .eq("user_id", user.id);
+      } else if (is_voted && is_voted === 1) {
+        await supabase
+          .from("votes")
+          .delete()
+          .eq("event_id", id)
+          .eq("user_id", user.id);
+      } else {
+        await supabase
+          .from("votes")
+          .insert({ user_id: user.id, event_id: id, is_like: true });
+      }
+    } catch (error: any) {
+      toast({ title: "Like Error", description: error.message });
+    }
   }
 
   async function handleDislikeEvent() {
     try {
       if (!user) throw new Error("User must authenticated to dislike a post!");
-    } catch (error: any) {}
+    } catch (error: any) {
+      toast({ title: "Like Error", description: error.message });
+    }
   }
 
   return (
