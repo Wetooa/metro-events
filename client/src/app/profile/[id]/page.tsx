@@ -1,12 +1,16 @@
 import BackToHomeButton from "@/components/BackToHomeButton";
-import AllEvents from "@/components/EventsPage/AllEvents";
+import EventsTabs from "@/components/Profile/EventsTabs";
 import { Badge } from "@/components/UI/Badge";
 import { Skeleton } from "@/components/UI/Skeleton";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/UI/Tabs";
 import { supabase } from "@/lib/supabase";
-import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
-import { useRouter } from "next/router";
-import React, { useState } from "react";
+import { dateFormatter } from "@/lib/utils";
+import {
+  ClockIcon,
+  ComponentPlaceholderIcon,
+  HandIcon,
+} from "@radix-ui/react-icons";
+import { GetServerSidePropsContext } from "next";
+import React from "react";
 
 async function fetchProfile(id: string) {
   const { data, error } = await supabase.rpc("get_user", { user_id_input: id });
@@ -28,7 +32,6 @@ export default async function Profile({ params }: GetServerSidePropsContext) {
     address,
     birthday,
     created_at,
-    email,
     info,
     privilege,
     username,
@@ -43,47 +46,42 @@ export default async function Profile({ params }: GetServerSidePropsContext) {
         <div className="w-full h-36 bg-slate-200"></div>
 
         <div>
-          {/* profile photo */}
           <div className="absolute top-20 left-5">
             <div className="w-auto h-28 rounded-full aspect-square bg-slate-300"></div>
           </div>
 
-          <div className="mt-16">
-            <h6>
-              {firstname} {lastname}
-            </h6>
-            <p>@{username}</p>
-            <Badge>{privilege}</Badge>
-            <p>{info}</p>
+          <div className="mt-16 px-4 flex flex-col gap-2">
+            <div>
+              <h6>
+                {firstname} {lastname}
+              </h6>
+              <p className="text-sm font-light gap-2 flex">
+                {username}
+                <Badge>{privilege}</Badge>
+              </p>
+            </div>
 
-            <div className="flex flex-col">
-              <p>{address}</p>
-              <p>{birthday}</p>
-              <p>{created_at}</p>
+            <p className="text-sm p-2">{info}</p>
+
+            <div className="flex gap-4 text-sm items-center opacity-80">
+              <div className="flex items-center gap-2">
+                <ComponentPlaceholderIcon />
+                <p>Lives {address}</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <HandIcon />
+                <p>Born {dateFormatter(birthday as string)}</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <ClockIcon />
+                <p>Joined {dateFormatter(created_at)}</p>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      <Tabs defaultValue="following" className="w-full">
-        <TabsList>
-          <TabsTrigger value="following">Following</TabsTrigger>
-          <TabsTrigger value="comments">Comments</TabsTrigger>
-          <TabsTrigger value="links">Likes</TabsTrigger>
-        </TabsList>
-        <TabsContent value="following">
-          {/* main shet */}
-          <AllEvents />
-        </TabsContent>
-        <TabsContent value="comments">
-          {/* main shet */}
-          <AllEvents />
-        </TabsContent>
-        <TabsContent value="likes">
-          {/* main shet */}
-          <AllEvents />
-        </TabsContent>
-      </Tabs>
+      <EventsTabs />
     </section>
   );
 }

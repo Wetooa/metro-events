@@ -1,22 +1,21 @@
-import { useAppSelector } from "@/context/hooks";
 import { GetAllEventsProps } from "@/types/supabase.interface";
 import { useEffect, useState } from "react";
 import { supabase } from "./supabase";
 
-export function useFetchEvent() {
-  const { user } = useAppSelector((state) => state.user);
+export function useFetchAllEvents(userId?: string, onlyFollowed: boolean = false) {
   const [events, setEvents] = useState<GetAllEventsProps[]>([]);
 
   useEffect(() => {
     const fetchEvents = async () => {
       const { data, error } = await supabase.rpc("get_events", {
-        user_id_input: user?.id,
+        user_id_input: userId,
+        only_followed: onlyFollowed
       });
       if (error) throw new Error("Error fetching events data");
       setEvents(data);
     };
     fetchEvents();
-  }, [user]);
+  }, [userId]);
 
 
   return events;

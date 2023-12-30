@@ -379,30 +379,6 @@ export interface Database {
         }
         Returns: undefined
       }
-      get_comment_comments:
-        | {
-            Args: {
-              comment_id_input: string
-            }
-            Returns: Database["public"]["CompositeTypes"]["comments_type"][]
-          }
-        | {
-            Args: {
-              event_id: string
-              user_id: string
-              comment: string
-            }
-            Returns: undefined
-          }
-        | {
-            Args: {
-              event_id: string
-              user_id: string
-              comment_id: string
-              comment: string
-            }
-            Returns: undefined
-          }
       get_event: {
         Args: {
           event_id_input: string
@@ -412,6 +388,7 @@ export interface Database {
           id: string
           organizer_id: string
           organizer_name: string
+          organizer_privilege: Database["public"]["Enums"]["privilege_type"]
           title: string
           info: string
           location: string
@@ -445,6 +422,7 @@ export interface Database {
           id: string
           organizer_id: string
           organizer_name: string
+          organizer_privilege: Database["public"]["Enums"]["privilege_type"]
           title: string
           info: string
           location: string
@@ -518,6 +496,7 @@ export interface Database {
         comment_id: string
         user_id: string
         commenter_name: string
+        commenter_privilege: Database["public"]["Enums"]["privilege_type"]
         comment: string
         created_at: string
       }

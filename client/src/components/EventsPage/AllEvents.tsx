@@ -3,10 +3,10 @@
 import React from "react";
 import EventCard from "../EventCard";
 import { supabase } from "@/lib/supabase";
-import { useFetchEvent } from "@/lib/hooks";
+import { useFetchAllEvents } from "@/lib/hooks";
 
 export default function AllEvents() {
-  const events = useFetchEvent();
+  const events = useFetchAllEvents();
 
   const eventChannel = supabase
     .channel("event_db_changes")

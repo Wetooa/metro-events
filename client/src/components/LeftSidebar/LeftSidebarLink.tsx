@@ -1,11 +1,11 @@
-import React, { ReactSVGElement } from "react";
+import React from "react";
 import Link, { LinkProps } from "next/link";
 import {
   TooltipProvider,
   Tooltip,
   TooltipTrigger,
   TooltipContent,
-} from "@radix-ui/react-tooltip";
+} from "@/components/UI/Tooltip";
 import { Button } from "../UI/Button";
 import { IconProps } from "@radix-ui/react-icons/dist/types";
 
@@ -38,7 +38,7 @@ export default function LeftSidebarLink({
               </span>
             </Button>
           </TooltipTrigger>
-          <TooltipContent>
+          <TooltipContent sideOffset={-100}>
             <p>{tooltip}</p>
           </TooltipContent>
         </Tooltip>

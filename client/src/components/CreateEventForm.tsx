@@ -94,11 +94,16 @@ function CreateEventForm() {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="outline">Create Event</Button>
+        <Button
+          className="w-full border-b rounded-none h-fit"
+          variant="outline"
+        >
+          <h5 className="p-1">Create Event</h5>
+        </Button>
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>Create Event</SheetTitle>
+          <SheetTitle className="text-2xl">Create Event</SheetTitle>
           <SheetDescription>
             Create an event here! Make it magical!
           </SheetDescription>

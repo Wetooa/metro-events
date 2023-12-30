@@ -1,5 +1,8 @@
+"use client";
+
 import CreateEventForm from "@/components/CreateEventForm";
 import AllEvents from "@/components/EventsPage/AllEvents";
+import FollowedEvents from "@/components/EventsPage/FollowedEvents";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/UI/Tabs";
 
 export default function Home() {
@@ -8,17 +11,15 @@ export default function Home() {
       <CreateEventForm />
 
       <Tabs defaultValue="allEvents" className="w-full">
-        <TabsList>
+        <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="allEvents">All Events</TabsTrigger>
           <TabsTrigger value="following">Following</TabsTrigger>
         </TabsList>
         <TabsContent value="allEvents">
-          {/* main shet */}
           <AllEvents />
         </TabsContent>
         <TabsContent value="following">
-          {/* main shet */}
-          <AllEvents />
+          <FollowedEvents />
         </TabsContent>
       </Tabs>
     </main>

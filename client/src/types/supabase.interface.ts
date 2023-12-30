@@ -6,3 +6,7 @@ export type GetAllEventsProps = Database["public"]["Functions"]["get_events"]["R
 export type EventProps = Database["public"]["Functions"]["get_event"]["Returns"][0]
 export type EventMembersProps = Database["public"]["CompositeTypes"]["event_members_type"];
 export type CommentProps = Database["public"]["CompositeTypes"]["comments_type"];
+
+export interface RecursiveCommentsProps extends CommentProps {
+  comments: RecursiveCommentsProps[];
+}
