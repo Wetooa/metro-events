@@ -9,8 +9,9 @@ import {
   FormLabel,
   FormControl,
   FormMessage,
+  FormDescription,
 } from "./UI/Form";
-import React from "react";
+import React, { useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useAppSelector } from "@/context/hooks";
 import { useToast } from "./UI/Toast/use-toast";
@@ -28,6 +29,8 @@ import {
   SheetFooter,
   SheetClose,
 } from "@/components/UI/Sheet";
+import { Cross1Icon } from "@radix-ui/react-icons";
+import { ScrollArea, ScrollBar } from "./UI/ScrollArea";
 
 const eventFormSchema = z
   .object({
@@ -45,12 +48,15 @@ const eventFormSchema = z
       .string()
       .min(5, { message: "Info must be at least 5 characters long" })
       .max(500, { message: "Info must not exceed 500 word limit" }),
+    photos: z.any().optional(),
   })
   .required();
 
 function CreateEventForm() {
   const { toast } = useToast();
   const { user } = useAppSelector((state) => state.user);
+
+  const [selectedImages, setSelectedImages] = useState<File[]>([]);
 
   const eventForm = useForm<z.infer<typeof eventFormSchema>>({
     resolver: zodResolver(eventFormSchema),
@@ -73,7 +79,6 @@ function CreateEventForm() {
         ...values,
         date: new Date(values.date + "T" + values.time).toUTCString(),
       };
-      console.log(inputs);
 
       await supabase.rpc("create_event", {
         ...inputs,
@@ -101,7 +106,7 @@ function CreateEventForm() {
           <h5 className="p-1">Create Event</h5>
         </Button>
       </SheetTrigger>
-      <SheetContent>
+      <SheetContent className="h-auto overflow-scroll">
         <SheetHeader>
           <SheetTitle className="text-2xl">Create Event</SheetTitle>
           <SheetDescription>
@@ -109,7 +114,7 @@ function CreateEventForm() {
           </SheetDescription>
         </SheetHeader>
 
-        <section className="w-full ">
+        <section className="w-full">
           <div className={`p-2  transition-all`}>
             <Form {...eventForm}>
               <form
@@ -194,6 +199,69 @@ function CreateEventForm() {
                           />
                         </FormControl>
                         <FormMessage />
+                      </FormItem>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={eventForm.control}
+                  name="photos"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormItem>
+                        <FormLabel>Info</FormLabel>
+                        <FormControl>
+                          <Input
+                            onChange={(event) => {
+                              if (event.target.files) {
+                                const files = Array.from(event.target.files);
+                                setSelectedImages((prevImages) => [
+                                  ...prevImages,
+                                  ...files,
+                                ]);
+                              }
+                            }}
+                            type="file"
+                            multiple
+                          />
+                        </FormControl>
+                        <FormMessage />
+                        {selectedImages.length > 0 && (
+                          <FormDescription>
+                            <ScrollArea className="h-48 w-full">
+                              <h6 className="p-2">Selected Images</h6>
+                              <div className="p-3">
+                                <div className="space-y-2">
+                                  {selectedImages.map((image, index) => {
+                                    return (
+                                      <div
+                                        className="flex gap-1 items-center justify-between"
+                                        key={index}
+                                      >
+                                        {image.name}
+                                        <Button
+                                          type="button"
+                                          variant={"outline"}
+                                          size={"sm"}
+                                          onClick={(event) => {
+                                            event.stopPropagation();
+                                            setSelectedImages(
+                                              selectedImages.filter(
+                                                (img) => img.name != image.name
+                                              )
+                                            );
+                                          }}
+                                        >
+                                          <Cross1Icon />
+                                        </Button>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            </ScrollArea>
+                          </FormDescription>
+                        )}
                       </FormItem>
                     </FormItem>
                   )}

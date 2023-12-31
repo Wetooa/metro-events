@@ -19,7 +19,9 @@ export default function SharedLayout({
       </ResizablePanel>
 
       <ResizableHandle />
-      <ResizablePanel>{children}</ResizablePanel>
+      <ResizablePanel>
+        <div className="pb-10">{children}</div>
+      </ResizablePanel>
       <ResizableHandle />
 
       <ResizablePanel defaultSize={20}>

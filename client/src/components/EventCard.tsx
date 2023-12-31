@@ -14,43 +14,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/UI/DropdownMenu";
-import * as z from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { Button } from "./UI/Button";
-import { Textarea } from "./UI/Textarea";
-import { toast } from "./UI/Toast/use-toast";
-import { supabase } from "@/lib/supabase";
 import { useAppSelector } from "@/context/hooks";
 
-import {
-  BookmarkIcon,
-  ChatBubbleIcon,
-  DotsHorizontalIcon,
-  ThickArrowDownIcon,
-  ThickArrowUpIcon,
-} from "@radix-ui/react-icons";
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogTitle,
-  DialogHeader,
-  DialogDescription,
-  DialogClose,
-} from "@/components/UI/Dialog";
-import {
-  Form,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormMessage,
-} from "./UI/Form";
-import { Separator } from "./UI/Separator";
-import CommentForm from "./CommentForm";
-import { AspectRatio } from "./UI/Aspect-ratio";
+import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { Badge } from "./UI/Badge";
+import { dateFormatter } from "@/lib/utils";
+import EventButtons from "./EventButtons";
 
 export default function EventCard(event: Readonly<GetAllEventsProps>) {
   const router = useRouter();
@@ -61,48 +30,11 @@ export default function EventCard(event: Readonly<GetAllEventsProps>) {
     location,
     info,
     date,
-    upvotes,
-    downvotes,
     is_voted,
     organizer_id,
-    comments_count,
     organizer_name,
     organizer_privilege,
   } = event;
-
-  async function handleLikeEvent() {
-    try {
-      if (!user) throw new Error("User must authenticated to like a post!");
-
-      if (is_voted && is_voted !== 1) {
-        await supabase
-          .from("votes")
-          .update({ is_like: true })
-          .eq("event_id", id)
-          .eq("user_id", user.id);
-      } else if (is_voted && is_voted === 1) {
-        await supabase
-          .from("votes")
-          .delete()
-          .eq("event_id", id)
-          .eq("user_id", user.id);
-      } else {
-        await supabase
-          .from("votes")
-          .insert({ user_id: user.id, event_id: id, is_like: true });
-      }
-    } catch (error: any) {
-      toast({ title: "Like Error", description: error.message });
-    }
-  }
-
-  async function handleDislikeEvent() {
-    try {
-      if (!user) throw new Error("User must authenticated to dislike a post!");
-    } catch (error: any) {
-      toast({ title: "Like Error", description: error.message });
-    }
-  }
 
   return (
     <section
@@ -161,8 +93,11 @@ export default function EventCard(event: Readonly<GetAllEventsProps>) {
             </div>
             <div className="opacity-80 text-sm">
               <p className="">
-                <b>When:</b> {new Date(date).toLocaleDateString()} @
-                {new Date(date).toLocaleTimeString()}
+                <b>When:</b> {dateFormatter(date)} - @{" "}
+                {new Date(date).toLocaleTimeString("en-us", {
+                  hour: "numeric",
+                  minute: "numeric",
+                })}
               </p>
               <p className="">
                 <b>Where: </b>
@@ -176,55 +111,7 @@ export default function EventCard(event: Readonly<GetAllEventsProps>) {
             <div className="bg-slate-200 w-full h-full rounded-md"></div>
           </div>
 
-          <section className="flex w-full justify-around">
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button
-                  className={`relative rounded-full aspect-square p-0`}
-                  variant={"ghost"}
-                >
-                  <ChatBubbleIcon />
-                  <p className="absolute left-10">{comments_count}</p>
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Comment</DialogTitle>
-                  <DialogDescription>
-                    Comment your thoughts about this event!
-                  </DialogDescription>
-                </DialogHeader>
-                <CommentForm {...event} />
-              </DialogContent>
-            </Dialog>
-
-            <Button
-              onClick={handleLikeEvent}
-              className={`relative rounded-full aspect-square p-0`}
-              variant={"ghost"}
-            >
-              <ThickArrowUpIcon
-                className={`${is_voted === 1 && "text-blue-300"}`}
-              />
-              <p className="absolute left-10">{upvotes}</p>
-            </Button>
-            <Button
-              className={`relative rounded-full aspect-square p-0`}
-              variant={"ghost"}
-            >
-              <ThickArrowDownIcon
-                className={`${is_voted === -1 && "text-blue-300"}`}
-              />
-              <p className="absolute left-10">{downvotes}</p>
-            </Button>
-
-            <Button
-              className={`relative rounded-full aspect-square p-0`}
-              variant={"ghost"}
-            >
-              <BookmarkIcon className={`${false && "text-blue-300"}`} />
-            </Button>
-          </section>
+          <EventButtons {...event} />
         </div>
       </div>
     </section>
