@@ -27,7 +27,7 @@ export const fetchUser = createAsyncThunk(
     const { data: userFetchData, error: userFetchError } = await supabase.rpc("get_user", { user_id_input: authData.user.id });
     if (userFetchError) return rejectWithValue(userFetchError);
 
-    return userFetchData[0];
+    return userFetchData;
   }
 )
 

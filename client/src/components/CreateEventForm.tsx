@@ -27,10 +27,9 @@ import {
   SheetTitle,
   SheetDescription,
   SheetFooter,
-  SheetClose,
 } from "@/components/UI/Sheet";
 import { Cross1Icon } from "@radix-ui/react-icons";
-import { ScrollArea, ScrollBar } from "./UI/ScrollArea";
+import { ScrollArea } from "./UI/ScrollArea";
 
 const eventFormSchema = z
   .object({

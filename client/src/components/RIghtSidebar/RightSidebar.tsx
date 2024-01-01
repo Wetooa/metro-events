@@ -7,7 +7,7 @@ export default function RightSidebar() {
     <aside className="h-screen">
       <SearchBar />
       <UserDetails />
-      <WhatsHappening />
+      {/* <WhatsHappening /> */}
     </aside>
   );
 }

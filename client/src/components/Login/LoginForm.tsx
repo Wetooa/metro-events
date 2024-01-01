@@ -60,7 +60,6 @@ export default function LoginForm() {
         title: "Login Success",
         description: "User logged in successfully!",
       });
-      router.back();
     } catch (error: any) {
       toast({ title: "Login Error", description: error.message });
     }

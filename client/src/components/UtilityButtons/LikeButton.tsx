@@ -15,7 +15,7 @@ export default function LikeButton({
   eventId,
   commentId,
   status,
-}: LikeButtonProps) {
+}: Readonly<LikeButtonProps>) {
   const { user } = useAppSelector((state) => state.user);
 
   async function handleLikeEvent() {

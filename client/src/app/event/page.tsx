@@ -56,9 +56,10 @@ function useFetchEvent(eventId: string) {
             return { ...comment, comments: [] };
           })
         );
-      } catch (error: any) {}
+      } catch (error: any) {
+        console.log(error);
+      }
     };
-
     fetchEventData();
   }, [eventId, user?.id]);
 

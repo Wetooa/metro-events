@@ -185,18 +185,21 @@ export interface Database {
       join_event_requests: {
         Row: {
           event_id: string | null
+          id: string
           message: string | null
           requested_at: string | null
           user_id: string | null
         }
         Insert: {
           event_id?: string | null
+          id?: string
           message?: string | null
           requested_at?: string | null
           user_id?: string | null
         }
         Update: {
           event_id?: string | null
+          id?: string
           message?: string | null
           requested_at?: string | null
           user_id?: string | null
@@ -220,16 +223,19 @@ export interface Database {
       }
       join_organizer_requests: {
         Row: {
+          id: string
           message: string | null
           requested_at: string | null
           user_id: string | null
         }
         Insert: {
+          id?: string
           message?: string | null
           requested_at?: string | null
           user_id?: string | null
         }
         Update: {
+          id?: string
           message?: string | null
           requested_at?: string | null
           user_id?: string | null
@@ -410,8 +416,7 @@ export interface Database {
     Functions: {
       accept_request_to_be_organizer: {
         Args: {
-          user_id: string
-          acceptor_id: string
+          user_id_input: string
         }
         Returns: undefined
       }
@@ -486,6 +491,34 @@ export interface Database {
         }
         Returns: undefined
       }
+      deny_request_to_be_organizer: {
+        Args: {
+          user_id_input: string
+        }
+        Returns: undefined
+      }
+      get_all_join_event_requests: {
+        Args: {
+          event_id_input: string
+        }
+        Returns: Database["public"]["CompositeTypes"]["join_event_requests_type"][]
+      }
+      get_all_join_organizer_requests: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          id: string
+          user_id: string
+          message: string
+          requested_at: string
+          requester: Database["public"]["CompositeTypes"]["simple_user_type"]
+        }[]
+      }
+      get_all_organizer_join_event_requests: {
+        Args: {
+          user_id_input: string
+        }
+        Returns: Database["public"]["CompositeTypes"]["join_event_requests_type"][]
+      }
       get_comment_comments:
         | {
             Args: {
@@ -506,7 +539,7 @@ export interface Database {
         Args: {
           comment_id_input: string
         }
-        Returns: Database["public"]["CompositeTypes"]["creator_type"]
+        Returns: Database["public"]["CompositeTypes"]["simple_user_type"]
       }
       get_comment_status: {
         Args: {
@@ -539,7 +572,7 @@ export interface Database {
         Args: {
           event_id_input: string
         }
-        Returns: Database["public"]["CompositeTypes"]["creator_type"]
+        Returns: Database["public"]["CompositeTypes"]["simple_user_type"]
       }
       get_event_status: {
         Args: {
@@ -569,6 +602,12 @@ export interface Database {
           user_id: string
         }[]
       }
+      get_simple_user: {
+        Args: {
+          user_id_input: string
+        }
+        Returns: Database["public"]["CompositeTypes"]["simple_user_type"]
+      }
       get_user: {
         Args: {
           user_id_input: string
@@ -584,7 +623,21 @@ export interface Database {
           lastname: string | null
           privilege: Database["public"]["Enums"]["privilege_type"]
           username: string
-        }[]
+        }
+      }
+      mark_all_notification: {
+        Args: {
+          user_id_input: string
+          is_read_input?: boolean
+        }
+        Returns: undefined
+      }
+      mark_notification: {
+        Args: {
+          notification_id_input: string
+          is_read_input?: boolean
+        }
+        Returns: undefined
       }
       request_to_be_organizer: {
         Args: {
@@ -633,6 +686,7 @@ export interface Database {
         | "commented"
         | "liked"
         | "disliked"
+      follow_status_type: "followed" | "unfollowed" | "pending"
       privilege_type: "admin" | "organizer" | "user"
     }
     CompositeTypes: {
@@ -643,7 +697,7 @@ export interface Database {
         user_id: string
         comment: string
         created_at: string
-        commenter: Database["public"]["CompositeTypes"]["creator_type"]
+        commenter: Database["public"]["CompositeTypes"]["simple_user_type"]
         status: Database["public"]["CompositeTypes"]["status_type"]
       }
       creator_type: {
@@ -666,8 +720,22 @@ export interface Database {
         date: string
         created_at: string
         is_cancelled: boolean
-        organizer: Database["public"]["CompositeTypes"]["creator_type"]
+        organizer: Database["public"]["CompositeTypes"]["simple_user_type"]
         status: Database["public"]["CompositeTypes"]["status_type"]
+      }
+      join_event_requests_type: {
+        id: string
+        user_id: string
+        event_id: string
+        message: string
+        requested_at: string
+        requester: Database["public"]["CompositeTypes"]["simple_user_type"]
+      }
+      simple_user_type: {
+        id: string
+        username: string
+        privilege: Database["public"]["Enums"]["privilege_type"]
+        email: string
       }
       status_type: {
         event_id: string
@@ -677,6 +745,7 @@ export interface Database {
         is_voted: number
         comments_count: number
         is_bookmarked: boolean
+        follow_status: Database["public"]["Enums"]["follow_status_type"]
       }
     }
   }

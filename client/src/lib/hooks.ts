@@ -11,7 +11,6 @@ export function useFetchAllEvents(userId?: string, filter: GetAllEventsFilter = 
         user_id_input: userId,
         filter
       });
-      console.log(data, error);
 
       if (error) return
       setEvents(data);

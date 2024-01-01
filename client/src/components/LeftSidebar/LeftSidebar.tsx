@@ -6,6 +6,8 @@ import {
   BellIcon,
   BookmarkIcon,
   ChatBubbleIcon,
+  LockClosedIcon,
+  BackpackIcon,
 } from "@radix-ui/react-icons";
 import LeftSidebarLink from "./LeftSidebarLink";
 import { useAppSelector } from "@/context/hooks";
@@ -51,6 +53,22 @@ export default function LeftSidebar() {
           name={"messages"}
           href={"/messages"}
         />
+        {user && user?.privilege !== "user" && (
+          <LeftSidebarLink
+            Icon={BackpackIcon}
+            tooltip="Manage your events"
+            name={"organizer"}
+            href={"/organizer"}
+          />
+        )}
+        {user && user?.privilege === "admin" && (
+          <LeftSidebarLink
+            Icon={LockClosedIcon}
+            tooltip="Manage the website"
+            name={"admin"}
+            href={"/admin"}
+          />
+        )}
       </ul>
     </nav>
   );

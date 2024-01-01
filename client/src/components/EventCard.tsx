@@ -1,5 +1,7 @@
 "use client";
 
+import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import React, { MouseEvent } from "react";
 import { useRouter } from "next/navigation";
 import { GetAllEventsProps } from "@/types/supabase.interface";
@@ -15,51 +17,160 @@ import {
 } from "@/components/UI/DropdownMenu";
 import { useAppSelector } from "@/context/hooks";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
-import { Badge } from "./UI/Badge";
 import { dateFormatter } from "@/lib/utils";
 import CommentButton from "./UtilityButtons/CommentButton";
 import LikeButton from "./UtilityButtons/LikeButton";
 import DislikeButton from "./UtilityButtons/DislikeButton";
 import BookmarkButton from "./UtilityButtons/BookmarkButton";
+import { Button } from "./UI/Button";
+import BadgeComponent from "./BadgeComponent";
+import { toast } from "./UI/Toast/use-toast";
+import { supabase } from "@/lib/supabase";
+import { Popover, PopoverContent, PopoverTrigger } from "./UI/Popover";
+import { Textarea } from "./UI/Textarea";
+import { useForm } from "react-hook-form";
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+  FormDescription,
+} from "./UI/Form";
+import AvatarComponent from "./AvatarComponent";
+
+const followEventSchema = z
+  .object({
+    message: z
+      .string()
+      .min(2, { message: "Message must be at least 2 characters long" })
+      .max(200, { message: "Title must be at most 200 characters long" }),
+  })
+  .required();
 
 export default function EventCard(event: Readonly<GetAllEventsProps>) {
   const router = useRouter();
   const { user } = useAppSelector((state) => state.user);
   const { id, title, location, info, date, organizer_id, organizer, status } =
     event;
-  const { organizer_name, organizer_privilege } = organizer;
+  const { username, privilege } = organizer;
+
+  const followEventForm = useForm<z.infer<typeof followEventSchema>>({
+    resolver: zodResolver(followEventSchema),
+    defaultValues: {
+      message: "",
+    },
+  });
+
+  async function handleUnfollowEvent() {}
+
+  async function handleFollowEvent(values: z.infer<typeof followEventSchema>) {
+    try {
+      if (!user)
+        throw new Error("User must be authenticated to follow an event!");
+
+      const { data, error } = await supabase.rpc("request_to_join_event", {
+        event_id_input: id,
+        user_id_input: user.id,
+        message: values.message ?? "I would like to join this event!",
+      });
+
+      if (error) throw new Error(error.message);
+
+      toast({
+        title: "Follow Success",
+        description: "Request sent successfully!",
+      });
+    } catch (error: any) {
+      toast({ title: "Follow Error", description: error.message });
+    }
+  }
 
   return (
-    <section
-      // onKeyDown={() => {}}
-      // onClick={() => router.push(`/event?id=${id}`)}
-      className="hover:bg-black/30 transition-all border-b border-white/20 p-4 "
-    >
+    <section className="hover:bg-black/30 transition-all border-b border-white/20 p-4 pr-6">
       <div className="flex gap-2">
-        <Avatar
-          className="hover:opacity-80 transition-all"
-          onClick={(event) => {
-            event.stopPropagation();
-            router.push(`/profile/${organizer_id}`);
-          }}
-        >
-          <AvatarImage src="https://github.com/shadcn.png" />
-          <AvatarFallback>CN</AvatarFallback>
-        </Avatar>
-
+        <AvatarComponent
+          fallbackText={[organizer.username]}
+          userId={organizer.id}
+        />
         <div className="flex-1 space-y-3">
           <div className="flex flex-col gap-1">
             <div className="flex justify-between">
               <Link href={`/event?id=${id}`}>
                 <h5 className="hover:underline">{title}</h5>
               </Link>
-              <div>
+              <div className="space-x-4">
+                {user && (
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        className="rounded-full"
+                        variant={
+                          status.follow_status === "followed"
+                            ? "outline"
+                            : "default"
+                        }
+                      >
+                        {status.follow_status[0].toUpperCase() +
+                          status.follow_status.substring(1)}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-60">
+                      <div className="grid gap-4">
+                        <div className="space-y-2">
+                          <h5 className="font-bold leading-none">
+                            Follow an event
+                          </h5>
+                          <p className="text-xs font-light text-muted-foreground">
+                            Send a proper message! You wanna join the meeting
+                            right?
+                          </p>
+                        </div>
+                        <div className="grid gap-2">
+                          <Form {...followEventForm}>
+                            <form
+                              onSubmit={followEventForm.handleSubmit(
+                                handleFollowEvent
+                              )}
+                              className="space-y-4 mt-5 flex flex-col items-end"
+                            >
+                              <FormField
+                                control={followEventForm.control}
+                                name="message"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormItem>
+                                      <FormLabel>Message</FormLabel>
+                                      <FormControl>
+                                        <Textarea
+                                          placeholder="I would like to join this event!"
+                                          autoFocus
+                                          {...field}
+                                        />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  </FormItem>
+                                )}
+                              />
+                              <Button className="w-fit" type="submit">
+                                Submit
+                              </Button>
+                            </form>
+                          </Form>
+                        </div>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                )}
+
                 <DropdownMenu>
                   <DropdownMenuTrigger>
                     <DotsHorizontalIcon className="scale-125 rounded-full aspect-square opacity-80" />
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
-                    <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                    <DropdownMenuLabel>Event Settings</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem>Profile</DropdownMenuItem>
                     <DropdownMenuItem>Billing</DropdownMenuItem>
@@ -79,10 +190,10 @@ export default function EventCard(event: Readonly<GetAllEventsProps>) {
               >
                 <p className="text-md font-light">
                   <b>Organizer: </b>
-                  {organizer_name}
+                  {username}
                 </p>
               </Link>
-              <Badge className="text-xs">{organizer_privilege}</Badge>
+              <BadgeComponent userId={organizer_id} privilege={privilege} />
             </div>
             <div className="opacity-80 text-sm">
               <p className="">

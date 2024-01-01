@@ -1,8 +1,4 @@
-import EventCard from "@/components/EventCard";
 import EventsPage from "@/components/EventsPage";
-import NoEvents from "@/components/NoEvents";
-import { useAppSelector } from "@/context/hooks";
-import { useFetchAllEvents } from "@/lib/hooks";
 import React from "react";
 
 export default function Bookmarks() {
