@@ -4,18 +4,29 @@ import { Badge } from "../UI/Badge";
 import { Avatar, AvatarFallback, AvatarImage } from "../UI/Avatar";
 import { useRouter } from "next/navigation";
 import { dateFormatter } from "@/lib/utils";
+import CommentButton from "../UtilityButtons/CommentButton";
+import LikeButton from "../UtilityButtons/LikeButton";
+import DislikeButton from "../UtilityButtons/DislikeButton";
 
 interface CommentComponentProps extends RecursiveCommentsProps {}
 
 export default function CommentComponent({
   comment,
-  commenter_name,
   created_at,
   comments,
+  id,
   user_id,
-  commenter_privilege,
+  commenter,
+  status,
+  event_id,
+  comment_id,
 }: CommentComponentProps) {
   const router = useRouter();
+  const {
+    organizer_name: commenter_name,
+    organizer_privilege: commenter_privilege,
+  } = commenter;
+  const { comments_count } = status;
 
   return (
     <div className="border-b border-white/20 p-2">
@@ -32,21 +43,27 @@ export default function CommentComponent({
           </Avatar>
         </div>
 
-        <div className="flex flex-col gap-1">
-          <div className="flex">
-            <Link
-              href={`/profile/${user_id}`}
-              className="flex gap-2 hover:underline"
-            >
-              <span className="text-xl font-bold">{commenter_name}</span>
-            </Link>
-            <Badge className="scale-75">{commenter_privilege}</Badge>
+        <div className="flex flex-col gap-1 w-full">
+          <div>
+            <div className="flex">
+              <Link
+                href={`/profile/${user_id}`}
+                className="flex gap-2 hover:underline"
+              >
+                <span className="text-xl font-bold">{commenter_name}</span>
+              </Link>
+              <Badge className="scale-75">{commenter_privilege}</Badge>
+            </div>
+            <p className="text-xs font-thin">{dateFormatter(created_at)}</p>
+            <p>{comment}</p>
           </div>
-          <p className="text-xs font-thin">{dateFormatter(created_at)}</p>
-          <p>{comment}</p>
+          <div className="w-full flex justify-around">
+            <CommentButton eventId={event_id} commentId={id} status={status} />
+            <LikeButton eventId={event_id} commentId={id} status={status} />
+            <DislikeButton eventId={event_id} commentId={id} status={status} />
+          </div>
         </div>
       </div>
-      <div></div>
     </div>
   );
 }

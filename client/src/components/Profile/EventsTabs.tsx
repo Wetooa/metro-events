@@ -3,24 +3,32 @@
 import React from "react";
 
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/UI/Tabs";
-import FollowedEvents from "../EventsPage/FollowedEvents";
+import EventsPage from "../EventsPage";
 
-export default function EventsTabs() {
+interface EventsTabsProps {
+  userId?: string;
+}
+
+export default function EventsTabs({ userId }: EventsTabsProps) {
   return (
     <Tabs defaultValue="following" className="w-full mt-6">
-      <TabsList className="grid w-full grid-cols-3">
+      <TabsList className="grid w-full grid-cols-4">
         <TabsTrigger value="following">Following</TabsTrigger>
         <TabsTrigger value="comments">Comments</TabsTrigger>
-        <TabsTrigger value="links">Likes</TabsTrigger>
+        <TabsTrigger value="likes">Likes</TabsTrigger>
+        <TabsTrigger value="dislikes">Dislikes</TabsTrigger>
       </TabsList>
       <TabsContent value="following">
-        <FollowedEvents />
+        <EventsPage userId={userId} filter="followed" />
       </TabsContent>
       <TabsContent value="comments">
-        <FollowedEvents />
+        <EventsPage userId={userId} filter="commented" />
       </TabsContent>
       <TabsContent value="likes">
-        <FollowedEvents />
+        <EventsPage userId={userId} filter="liked" />
+      </TabsContent>
+      <TabsContent value="dislikes">
+        <EventsPage userId={userId} filter="disliked" />
       </TabsContent>
     </Tabs>
   );

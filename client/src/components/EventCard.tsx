@@ -1,10 +1,9 @@
 "use client";
 
-import React, { MouseEvent, MouseEventHandler } from "react";
+import React, { MouseEvent } from "react";
 import { useRouter } from "next/navigation";
 import { GetAllEventsProps } from "@/types/supabase.interface";
 import { Avatar, AvatarFallback, AvatarImage } from "./UI/Avatar";
-
 import Link from "next/link";
 import {
   DropdownMenu,
@@ -15,26 +14,20 @@ import {
   DropdownMenuTrigger,
 } from "@/components/UI/DropdownMenu";
 import { useAppSelector } from "@/context/hooks";
-
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { Badge } from "./UI/Badge";
 import { dateFormatter } from "@/lib/utils";
-import EventButtons from "./EventButtons";
+import CommentButton from "./UtilityButtons/CommentButton";
+import LikeButton from "./UtilityButtons/LikeButton";
+import DislikeButton from "./UtilityButtons/DislikeButton";
+import BookmarkButton from "./UtilityButtons/BookmarkButton";
 
 export default function EventCard(event: Readonly<GetAllEventsProps>) {
   const router = useRouter();
   const { user } = useAppSelector((state) => state.user);
-  const {
-    id,
-    title,
-    location,
-    info,
-    date,
-    is_voted,
-    organizer_id,
-    organizer_name,
-    organizer_privilege,
-  } = event;
+  const { id, title, location, info, date, organizer_id, organizer, status } =
+    event;
+  const { organizer_name, organizer_privilege } = organizer;
 
   return (
     <section
@@ -111,7 +104,12 @@ export default function EventCard(event: Readonly<GetAllEventsProps>) {
             <div className="bg-slate-200 w-full h-full rounded-md"></div>
           </div>
 
-          <EventButtons {...event} />
+          <section className="flex w-full justify-around">
+            <CommentButton eventId={id} status={status} />
+            <LikeButton eventId={id} status={status} />
+            <DislikeButton eventId={id} status={status} />
+            <BookmarkButton {...event} />
+          </section>
         </div>
       </div>
     </section>

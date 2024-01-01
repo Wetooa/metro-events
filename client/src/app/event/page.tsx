@@ -1,7 +1,6 @@
 "use client";
 
 import BackToHomeButton from "@/components/BackToHomeButton";
-import CommentForm from "@/components/CommentForm";
 import EventCard from "@/components/EventCard";
 import { Button } from "@/components/UI/Button";
 import { Skeleton } from "@/components/UI/Skeleton";
@@ -29,12 +28,12 @@ import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import CommentComponent from "@/components/EventPage/CommentComponent";
 import { Separator } from "@/components/UI/Separator";
+import CommentForm from "@/components/CommentForm";
 
 function useFetchEvent(eventId: string) {
   const { user } = useAppSelector((state) => state.user);
 
   const [event, setEvent] = useState<EventProps>();
-  const [members, setMembers] = useState<EventMembersProps>();
   const [comments, setComments] = useState<RecursiveCommentsProps[]>();
 
   useEffect(() => {
@@ -46,12 +45,12 @@ function useFetchEvent(eventId: string) {
         );
         const { data: commentsData, error: commentsError } = await supabase.rpc(
           "get_event_comments",
-          { event_id_input: eventId }
+          { event_id_input: eventId, user_id_input: user?.id }
         );
 
         if (eventError || commentsError) throw new Error();
 
-        setEvent(eventData[0]);
+        setEvent(eventData);
         setComments(
           commentsData.map((comment) => {
             return { ...comment, comments: [] };
@@ -83,7 +82,7 @@ export default function Event() {
 
       <section className="">
         <div className="px-5 mb-6">
-          <CommentForm {...event} />
+          <CommentForm eventId={eventId ?? ""} />
         </div>
         <Separator />
         <div className="">
@@ -92,24 +91,6 @@ export default function Event() {
           })}
         </div>
       </section>
-
-      {/* <Drawer>
-        <DrawerTrigger>
-          <Button className="w-full">Reply</Button>
-        </DrawerTrigger>
-        <DrawerContent>
-          <DrawerHeader>
-            <DrawerTitle>Are you sure absolutely sure?</DrawerTitle>
-            <DrawerDescription>This action cannot be undone.</DrawerDescription>
-          </DrawerHeader>
-          <DrawerFooter>
-            <Button>Submit</Button>
-            <DrawerClose>
-              <Button variant="outline">Cancel</Button>
-            </DrawerClose>
-          </DrawerFooter>
-        </DrawerContent>
-      </Drawer> */}
     </section>
   );
 }

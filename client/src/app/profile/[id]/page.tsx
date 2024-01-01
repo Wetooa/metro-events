@@ -81,7 +81,7 @@ export default async function Profile({ params }: GetServerSidePropsContext) {
         </div>
       </section>
 
-      <EventsTabs />
+      <EventsTabs userId={params.id} />
     </section>
   );
 }

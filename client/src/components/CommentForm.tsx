@@ -28,7 +28,12 @@ const commentFormSchema = z
   })
   .required();
 
-export default function CommentForm({ id }: GetAllEventsProps) {
+interface CommentFormProps {
+  eventId: string;
+  commentId?: string;
+}
+
+export default function CommentForm({ eventId, commentId }: CommentFormProps) {
   const { user } = useAppSelector((state) => state.user);
 
   const commentForm = useForm<z.infer<typeof commentFormSchema>>({
@@ -38,19 +43,26 @@ export default function CommentForm({ id }: GetAllEventsProps) {
     },
   });
 
-  async function handleCommentOnEvent(
-    values: z.infer<typeof commentFormSchema>
-  ) {
+  async function handleComment(values: z.infer<typeof commentFormSchema>) {
     try {
       if (!user) throw new Error("User must authenticated to comment");
 
-      const { data, error } = await supabase.rpc("comment_on_event", {
-        comment: values.message,
-        event_id: id,
-        user_id: user?.id,
-      });
-      if (error) throw new Error(error.message);
-
+      if (commentId) {
+        const { data, error } = await supabase.rpc("comment_on_comment", {
+          comment: values.message,
+          event_id_input: eventId,
+          user_id_input: user?.id,
+          comment_id_input: commentId,
+        });
+        if (error) throw new Error(error.message);
+      } else {
+        const { data, error } = await supabase.rpc("comment_on_event", {
+          comment: values.message,
+          event_id_input: eventId,
+          user_id_input: user?.id,
+        });
+        if (error) throw new Error(error.message);
+      }
       toast({
         title: "Comment Success",
         description: "Comment sent successfully!",
@@ -64,7 +76,7 @@ export default function CommentForm({ id }: GetAllEventsProps) {
     <section className="z-10">
       <Form {...commentForm}>
         <form
-          onSubmit={commentForm.handleSubmit(handleCommentOnEvent)}
+          onSubmit={commentForm.handleSubmit(handleComment)}
           className="space-y-4 mt-5"
         >
           <FormField
