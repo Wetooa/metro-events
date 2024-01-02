@@ -7,6 +7,7 @@ import { dateFormatter } from "@/lib/utils";
 import CommentButton from "../UtilityButtons/CommentButton";
 import LikeButton from "../UtilityButtons/LikeButton";
 import DislikeButton from "../UtilityButtons/DislikeButton";
+import AvatarComponent from "../AvatarComponent";
 
 interface CommentComponentProps extends RecursiveCommentsProps {}
 
@@ -22,25 +23,15 @@ export default function CommentComponent({
   comment_id,
 }: CommentComponentProps) {
   const router = useRouter();
-  const {
-    organizer_name: commenter_name,
-    organizer_privilege: commenter_privilege,
-  } = commenter;
+  const { username: commenter_name, privilege: commenter_privilege } =
+    commenter;
   const { comments_count } = status;
 
   return (
     <div className="border-b border-white/20 p-2">
       <div className="flex gap-2 p-1">
         <div>
-          <Avatar
-            className="hover:opacity-80 transition-all"
-            onClick={(event) => {
-              router.push(`/profile/${user_id}`);
-            }}
-          >
-            <AvatarImage src="https://github.com/shadcn.png" />
-            <AvatarFallback>CN</AvatarFallback>
-          </Avatar>
+          <AvatarComponent userId={user_id} fallbackText={[commenter_name]} />
         </div>
 
         <div className="flex flex-col gap-1 w-full">

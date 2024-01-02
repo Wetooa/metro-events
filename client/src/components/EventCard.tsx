@@ -2,10 +2,17 @@
 
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { MouseEvent } from "react";
+import React, { MouseEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { GetAllEventsProps } from "@/types/supabase.interface";
-import { Avatar, AvatarFallback, AvatarImage } from "./UI/Avatar";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/UI/Carousel";
+
 import Link from "next/link";
 import {
   DropdownMenu,
@@ -39,6 +46,9 @@ import {
   FormDescription,
 } from "./UI/Form";
 import AvatarComponent from "./AvatarComponent";
+import { Card, CardContent } from "./UI/Card";
+import Image from "next/image";
+import { FileObject } from "@supabase/storage-js";
 
 const followEventSchema = z
   .object({
@@ -49,12 +59,36 @@ const followEventSchema = z
   })
   .required();
 
+function useFetchEventImages(eventId: string) {
+  const [images, setImages] = useState<FileObject[]>([]);
+  useEffect(() => {
+    const fetchEventImages = async () => {
+      try {
+        const { data, error } = await supabase.storage
+          .from("event_photos")
+          .list(eventId);
+        console.log(eventId);
+        console.log(data);
+
+        if (error) throw new Error(error.message);
+        setImages(data);
+      } catch (error: any) {
+        console.log(error);
+      }
+    };
+    fetchEventImages();
+  }, [eventId]);
+
+  return images;
+}
+
 export default function EventCard(event: Readonly<GetAllEventsProps>) {
   const router = useRouter();
   const { user } = useAppSelector((state) => state.user);
   const { id, title, location, info, date, organizer_id, organizer, status } =
     event;
   const { username, privilege } = organizer;
+  const images = useFetchEventImages(id);
 
   const followEventForm = useForm<z.infer<typeof followEventSchema>>({
     resolver: zodResolver(followEventSchema),
@@ -63,7 +97,22 @@ export default function EventCard(event: Readonly<GetAllEventsProps>) {
     },
   });
 
-  async function handleUnfollowEvent() {}
+  async function handleUnfollowEvent() {
+    try {
+      if (!user) throw new Error("Must be authenticated to unfollow an event!");
+
+      const { data, error } = await supabase.rpc("unfollow_event", {
+        event_id_input: id,
+        user_id_input: user.id,
+      });
+      toast({
+        title: "Unfollow Sucess",
+        description: "Successfully unfollowed an event!",
+      });
+    } catch (error: any) {
+      toast({ title: "Unfollow Error", description: error.message });
+    }
+  }
 
   async function handleFollowEvent(values: z.infer<typeof followEventSchema>) {
     try {
@@ -88,81 +137,87 @@ export default function EventCard(event: Readonly<GetAllEventsProps>) {
   }
 
   return (
-    <section className="hover:bg-black/30 transition-all border-b border-white/20 p-4 pr-6">
+    <section className="hover:bg-black/30 h-fit transition-all border-b border-white/20 p-4 pr-6">
       <div className="flex gap-2">
         <AvatarComponent
           fallbackText={[organizer.username]}
           userId={organizer.id}
         />
         <div className="flex-1 space-y-3">
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-2">
             <div className="flex justify-between">
               <Link href={`/event?id=${id}`}>
                 <h5 className="hover:underline">{title}</h5>
               </Link>
               <div className="space-x-4">
                 {user && (
-                  <Popover>
-                    <PopoverTrigger asChild>
+                  <>
+                    {status.follow_status === "followed" ? (
                       <Button
+                        onClick={handleUnfollowEvent}
                         className="rounded-full"
-                        variant={
-                          status.follow_status === "followed"
-                            ? "outline"
-                            : "default"
-                        }
+                        variant={"outline"}
                       >
-                        {status.follow_status[0].toUpperCase() +
-                          status.follow_status.substring(1)}
+                        Unfollow
                       </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-60">
-                      <div className="grid gap-4">
-                        <div className="space-y-2">
-                          <h5 className="font-bold leading-none">
-                            Follow an event
-                          </h5>
-                          <p className="text-xs font-light text-muted-foreground">
-                            Send a proper message! You wanna join the meeting
-                            right?
-                          </p>
-                        </div>
-                        <div className="grid gap-2">
-                          <Form {...followEventForm}>
-                            <form
-                              onSubmit={followEventForm.handleSubmit(
-                                handleFollowEvent
-                              )}
-                              className="space-y-4 mt-5 flex flex-col items-end"
-                            >
-                              <FormField
-                                control={followEventForm.control}
-                                name="message"
-                                render={({ field }) => (
-                                  <FormItem>
-                                    <FormItem>
-                                      <FormLabel>Message</FormLabel>
-                                      <FormControl>
-                                        <Textarea
-                                          placeholder="I would like to join this event!"
-                                          autoFocus
-                                          {...field}
-                                        />
-                                      </FormControl>
-                                      <FormMessage />
-                                    </FormItem>
-                                  </FormItem>
-                                )}
-                              />
-                              <Button className="w-fit" type="submit">
-                                Submit
-                              </Button>
-                            </form>
-                          </Form>
-                        </div>
-                      </div>
-                    </PopoverContent>
-                  </Popover>
+                    ) : status.follow_status === "pending" ? (
+                      <Button className="rounded-full" variant={"secondary"}>
+                        Pending
+                      </Button>
+                    ) : (
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button className="rounded-full">Follow</Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-60">
+                          <div className="grid gap-4">
+                            <div className="space-y-2">
+                              <h5 className="font-bold leading-none">
+                                Follow an event
+                              </h5>
+                              <p className="text-xs font-light text-muted-foreground">
+                                Send a proper message! You wanna join the
+                                meeting right?
+                              </p>
+                            </div>
+                            <div className="grid gap-2">
+                              <Form {...followEventForm}>
+                                <form
+                                  onSubmit={followEventForm.handleSubmit(
+                                    handleFollowEvent
+                                  )}
+                                  className="space-y-4 mt-5 flex flex-col items-end"
+                                >
+                                  <FormField
+                                    control={followEventForm.control}
+                                    name="message"
+                                    render={({ field }) => (
+                                      <FormItem>
+                                        <FormItem>
+                                          <FormLabel>Message</FormLabel>
+                                          <FormControl>
+                                            <Textarea
+                                              placeholder="I would like to join this event!"
+                                              autoFocus
+                                              {...field}
+                                            />
+                                          </FormControl>
+                                          <FormMessage />
+                                        </FormItem>
+                                      </FormItem>
+                                    )}
+                                  />
+                                  <Button className="w-fit" type="submit">
+                                    Submit
+                                  </Button>
+                                </form>
+                              </Form>
+                            </div>
+                          </div>
+                        </PopoverContent>
+                      </Popover>
+                    )}
+                  </>
                 )}
 
                 <DropdownMenu>
@@ -195,7 +250,7 @@ export default function EventCard(event: Readonly<GetAllEventsProps>) {
               </Link>
               <BadgeComponent userId={organizer_id} privilege={privilege} />
             </div>
-            <div className="opacity-80 text-sm">
+            <div className="opacity-80 text-xs">
               <p className="">
                 <b>When:</b> {dateFormatter(date)} - @{" "}
                 {new Date(date).toLocaleTimeString("en-us", {
@@ -210,10 +265,38 @@ export default function EventCard(event: Readonly<GetAllEventsProps>) {
             </div>
             <p className="text-sm">{info}</p>
           </div>
-          <div className="w-full h-32 mt-2">
-            {/* tmp img */}
-            <div className="bg-slate-200 w-full h-full rounded-md"></div>
-          </div>
+          {images && images.length > 0 && (
+            <div className="w-[90%] mt-2 flex justify-center">
+              <Carousel className="w-full max-w-xs">
+                <CarouselContent>
+                  {images.map((file, index) => (
+                    <CarouselItem key={index}>
+                      <div className="p-1">
+                        <Card>
+                          <CardContent className="flex aspect-square items-center justify-center p-6">
+                            <Image
+                              className="w-full h-full"
+                              src={
+                                supabase.storage
+                                  .from("event_photos")
+                                  .getPublicUrl(`${id}/${file.name}`).data
+                                  .publicUrl
+                              }
+                              alt={`image-${index}`}
+                              width={500}
+                              height={500}
+                            />
+                          </CardContent>
+                        </Card>
+                      </div>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious />
+                <CarouselNext />
+              </Carousel>
+            </div>
+          )}
 
           <section className="flex w-full justify-around">
             <CommentButton eventId={id} status={status} />

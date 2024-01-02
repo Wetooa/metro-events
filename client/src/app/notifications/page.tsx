@@ -26,14 +26,11 @@ export function useFetchNotifications() {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        if (!user) {
-          toast({
-            title: "Error",
-            description:
-              "User must be logged in to have personalized notifications!",
-          });
-          return;
-        }
+        if (!user)
+          throw new Error(
+            "User must be logged in to have personalized notifications!"
+          );
+
         const { data, error } = await supabase.rpc("get_notifications", {
           user_id_input: user.id,
         });
@@ -45,8 +42,8 @@ export function useFetchNotifications() {
         setUnmarkedNotifications(
           data.filter((notification) => !notification.is_read)
         );
-      } catch (error) {
-        console.log(error);
+      } catch (error: any) {
+        toast({ title: "Notification Error", description: error.message });
       }
     };
     fetchNotifications();
@@ -116,7 +113,7 @@ export default function Notifications() {
         </TabsList>
         <TabsContent value="unmarked">
           {unmarkedNotifications.length > 0 ? (
-            <div>
+            <div className="border-t-2 border-white/20">
               <div className="grid grid-cols-2 p-2 gap-2">
                 {unmarkedNotifications.map((notification) => {
                   return (
@@ -147,7 +144,7 @@ export default function Notifications() {
         </TabsContent>
         <TabsContent value="marked">
           {markedNotifications.length > 0 ? (
-            <div>
+            <div className="border-t-2 border-white/20">
               <div className="grid grid-cols-2 p-2 gap-2  opacity-80">
                 {markedNotifications.map((notification) => {
                   return (

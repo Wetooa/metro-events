@@ -79,10 +79,21 @@ function CreateEventForm() {
         date: new Date(values.date + "T" + values.time).toUTCString(),
       };
 
-      await supabase.rpc("create_event", {
+      const { data: eventData, error } = await supabase.rpc("create_event", {
         ...inputs,
         organizer_id: user.id,
       });
+
+      if (error) throw new Error(error.message);
+
+      // big concurrency problem loloololol
+      for (const file of selectedImages) {
+        const { data, error } = await supabase.storage
+          .from("event_photos")
+          .upload(`${eventData.id}/${file.name}`, file);
+        if (error) throw new Error(error.message);
+      }
+
       toast({
         title: "Success!",
         description: "Event was successfully created!",

@@ -12,6 +12,7 @@ export type StatusProps = Database["public"]["CompositeTypes"]["status_type"]
 export type NotificationsProps = Database["public"]["Functions"]["get_notifications"]["Returns"][0]
 export type PrivilegeType = Database["public"]["Enums"]["privilege_type"]
 export type JoinOrganizerRequests = Database["public"]["Functions"]["get_all_join_organizer_requests"]["Returns"][0]
+export type JoinEventRequests = Database["public"]["Functions"]["get_all_join_event_requests"]["Returns"][0]
 
 export interface RecursiveCommentsProps extends CommentProps {
   comments: RecursiveCommentsProps[];

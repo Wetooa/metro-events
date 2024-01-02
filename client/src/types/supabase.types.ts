@@ -467,17 +467,15 @@ export interface Database {
           organizer_id: string
         }
         Returns: {
-          address: string | null
-          birthday: string | null
-          created_at: string
-          email: string
-          firstname: string | null
+          created_at: string | null
+          date: string | null
           id: string
           info: string | null
-          lastname: string | null
-          privilege: Database["public"]["Enums"]["privilege_type"]
-          username: string
-        }[]
+          is_cancelled: boolean | null
+          location: string | null
+          organizer_id: string | null
+          title: string | null
+        }
       }
       delete_event: {
         Args: {
@@ -663,8 +661,8 @@ export interface Database {
       }
       unfollow_event: {
         Args: {
-          user_id: string
-          event_id: string
+          user_id_input: string
+          event_id_input: string
         }
         Returns: undefined
       }
@@ -686,6 +684,7 @@ export interface Database {
         | "commented"
         | "liked"
         | "disliked"
+        | "organized"
       follow_status_type: "followed" | "unfollowed" | "pending"
       privilege_type: "admin" | "organizer" | "user"
     }

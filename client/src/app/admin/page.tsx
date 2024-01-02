@@ -7,9 +7,11 @@ import { Skeleton } from "@/components/UI/Skeleton";
 import { toast } from "@/components/UI/Toast/use-toast";
 import { useAppSelector } from "@/context/hooks";
 import { supabase } from "@/lib/supabase";
+import { dateFormatter } from "@/lib/utils";
 import { JoinOrganizerRequests } from "@/types/supabase.interface";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import moment from "moment";
 
 function useFetchJoinOrganizerRequests() {
   const [joinOrganizerRequests, setJoinOrganizerRequests] = useState<
@@ -110,6 +112,11 @@ export default function Admin() {
                         />
                       </div>
                       <p className="opacity-80 text-xs">{email}</p>
+                      <p>
+                        Requested at
+                        {moment(requested_at).calendar()} -{" "}
+                        {dateFormatter(requested_at ?? "")}
+                      </p>
                       <p className="text-sm">{message}</p>
                     </div>
                     <div className="h-full flex items-center gap-2 text-sm">

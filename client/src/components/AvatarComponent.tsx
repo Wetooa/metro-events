@@ -16,9 +16,8 @@ export default function AvatarComponent({
   userId,
 }: Readonly<AvatarComponentProps>) {
   const router = useRouter();
-  const imageUrl = supabase.storage
-    .from("avatars")
-    .getPublicUrl(`${userId}.jpg`).data.publicUrl;
+  const imageUrl = supabase.storage.from("avatars").getPublicUrl(`${userId}`)
+    .data.publicUrl;
 
   return (
     <Avatar
