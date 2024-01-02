@@ -24,7 +24,7 @@ import {
 } from "../UI/Form";
 import { DatePicker } from "../UI/DatePicker";
 import { Label } from "../UI/Label";
-import { Separator } from "../UI/separator";
+import { Separator } from "../UI/Separator";
 
 const registerFormSchema = z
   .object({
