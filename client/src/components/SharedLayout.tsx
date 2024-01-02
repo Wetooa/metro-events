@@ -2,7 +2,7 @@
 
 import React, { ReactNode } from "react";
 import LeftSidebar from "@/components/LeftSidebar/LeftSidebar";
-import RightSidebar from "@/components/RightSidebar/RightSidebar";
+import RightSidebarComponent from "@/components/RightSidebar/RightSidebarComponent";
 import {
   ResizablePanelGroup,
   ResizablePanel,
@@ -25,7 +25,7 @@ export default function SharedLayout({
       <ResizableHandle />
 
       <ResizablePanel defaultSize={25}>
-        <RightSidebar />
+        <RightSidebarComponent />
       </ResizablePanel>
     </ResizablePanelGroup>
   );
