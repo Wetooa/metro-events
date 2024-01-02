@@ -219,7 +219,7 @@ function CreateEventForm() {
                   render={({ field }) => (
                     <FormItem>
                       <FormItem>
-                        <FormLabel>Info</FormLabel>
+                        <FormLabel>Images</FormLabel>
                         <FormControl>
                           <Input
                             onChange={(event) => {

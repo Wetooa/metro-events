@@ -206,7 +206,10 @@ export default function RegisterForm() {
                 <FormItem>
                   <FormLabel>Info</FormLabel>
                   <FormControl>
-                    <Textarea placeholder="ex. Minglanilla Cebu" {...field} />
+                    <Textarea
+                      placeholder="ex. I love metro events!"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
