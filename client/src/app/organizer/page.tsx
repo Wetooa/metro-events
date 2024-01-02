@@ -16,41 +16,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/UI/Tabs";
 import moment from "moment";
 import { dateFormatter } from "@/lib/utils";
 
-export function useFetchAllJoinEventRequests() {
-  const router = useRouter();
-  const { user } = useAppSelector((state) => state.user);
-  const [joinEventRequests, setJoinEventRequests] = useState<
-    JoinEventRequests[]
-  >([]);
-
-  useEffect(() => {
-    const fetchJoinEventRequests = async () => {
-      try {
-        if (!user) {
-          throw new Error(
-            "User must be authenticated see your event requests!"
-          );
-        }
-
-        const { data, error } = await supabase.rpc(
-          "get_all_organizer_join_event_requests",
-          {
-            user_id_input: user.id,
-          }
-        );
-
-        if (error) throw new Error(error.message);
-        setJoinEventRequests(data);
-      } catch (error: any) {
-        toast({ title: " Error", description: error.message });
-      }
-    };
-    fetchJoinEventRequests();
-  }, [router, user]);
-
-  return joinEventRequests;
-}
-
 export default function Organizer() {
   const { user } = useAppSelector((state) => state.user);
   const joinEventRequests = useFetchAllJoinEventRequests();
@@ -178,4 +143,39 @@ export default function Organizer() {
       </Tabs>
     </div>
   );
+}
+
+function useFetchAllJoinEventRequests() {
+  const router = useRouter();
+  const { user } = useAppSelector((state) => state.user);
+  const [joinEventRequests, setJoinEventRequests] = useState<
+    JoinEventRequests[]
+  >([]);
+
+  useEffect(() => {
+    const fetchJoinEventRequests = async () => {
+      try {
+        if (!user) {
+          throw new Error(
+            "User must be authenticated see your event requests!"
+          );
+        }
+
+        const { data, error } = await supabase.rpc(
+          "get_all_organizer_join_event_requests",
+          {
+            user_id_input: user.id,
+          }
+        );
+
+        if (error) throw new Error(error.message);
+        setJoinEventRequests(data);
+      } catch (error: any) {
+        toast({ title: " Error", description: error.message });
+      }
+    };
+    fetchJoinEventRequests();
+  }, [router, user]);
+
+  return joinEventRequests;
 }
