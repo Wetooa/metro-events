@@ -28,9 +28,9 @@ import { dateFormatter } from "@/lib/utils";
 import BadgeComponent from "../BadgeComponent";
 import { Button } from "../UI/Button";
 import { Dialog, DialogTrigger, DialogContent } from "@/components/UI/Dialog";
-import { useFetchNotifications } from "@/app/notifications/page";
 import AvatarComponent from "../AvatarComponent";
 import NoNotifications from "../Notifications/NoNotifications";
+import { useFetchNotifications } from "@/lib/notifHelpers";
 
 export default function UserDetails() {
   const router = useRouter();
@@ -104,8 +104,11 @@ export default function UserDetails() {
                       <CardHeader>
                         <CardTitle>Notifications</CardTitle>
                         <CardDescription>
-                          You have {unmarkedNotifications.length} unread
-                          messages.
+                          You have{" "}
+                          {unmarkedNotifications
+                            ? unmarkedNotifications.length
+                            : 0}{" "}
+                          unread messages.
                         </CardDescription>
                       </CardHeader>
                       <CardContent className="grid gap-4">
@@ -121,7 +124,8 @@ export default function UserDetails() {
                           </div>
                         </div>
                         <div>
-                          {unmarkedNotifications.length > 0 ? (
+                          {unmarkedNotifications &&
+                          unmarkedNotifications.length > 0 ? (
                             unmarkedNotifications.map((notification, index) => (
                               <div
                                 key={index}

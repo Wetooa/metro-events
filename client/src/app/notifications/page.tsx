@@ -7,86 +7,15 @@ import { Skeleton } from "@/components/UI/Skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/UI/Tabs";
 import { toast } from "@/components/UI/Toast/use-toast";
 import { useAppSelector } from "@/context/hooks";
+import {
+  handleMarkAllNotifications,
+  useFetchNotifications,
+} from "@/lib/notifHelpers";
 import { supabase } from "@/lib/supabase";
 import { NotificationsProps } from "@/types/supabase.interface";
 import { Database } from "@/types/supabase.types";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-
-export function useFetchNotifications() {
-  const router = useRouter();
-  const { user } = useAppSelector((state) => state.user);
-  const [markedNotifications, setMarkedNotifications] = useState<
-    NotificationsProps[]
-  >([]);
-  const [unmarkedNotifications, setUnmarkedNotifications] = useState<
-    NotificationsProps[]
-  >([]);
-
-  useEffect(() => {
-    const fetchNotifications = async () => {
-      try {
-        if (!user)
-          throw new Error(
-            "User must be logged in to have personalized notifications!"
-          );
-
-        const { data, error } = await supabase.rpc("get_notifications", {
-          user_id_input: user.id,
-        });
-        if (error) throw new Error(error.message);
-
-        setMarkedNotifications(
-          data.filter((notification) => notification.is_read)
-        );
-        setUnmarkedNotifications(
-          data.filter((notification) => !notification.is_read)
-        );
-      } catch (error: any) {
-        toast({ title: "Notification Error", description: error.message });
-      }
-    };
-    fetchNotifications();
-  }, [router, user]);
-
-  return { markedNotifications, unmarkedNotifications };
-}
-
-export async function handleMarkNotifications(
-  props: Database["public"]["Functions"]["mark_notification"]["Args"]
-) {
-  try {
-    const { error } = await supabase.rpc("mark_notification", props);
-    if (error) throw new Error(error.message);
-    toast({
-      title: "Marking Success",
-      description: "Notification was successfully marked!",
-    });
-  } catch (error: any) {
-    toast({
-      title: "Marking Error",
-      description: error.message,
-    });
-  }
-}
-
-export async function handleMarkAllNotifications(
-  props: Database["public"]["Functions"]["mark_all_notification"]["Args"]
-) {
-  try {
-    const { error } = await supabase.rpc("mark_all_notification", props);
-    if (error) throw new Error(error.message);
-    toast({
-      title: "Marking Success",
-      description: "All notifications were successfully marked!",
-    });
-  } catch (error: any) {
-    toast({
-      title: "Marking Error",
-      description: error.message,
-    });
-  }
-}
 
 export default function Notifications() {
   const { user } = useAppSelector((state) => state.user);
@@ -112,7 +41,7 @@ export default function Notifications() {
           <TabsTrigger value="marked">Marked</TabsTrigger>
         </TabsList>
         <TabsContent value="unmarked">
-          {unmarkedNotifications.length > 0 ? (
+          {unmarkedNotifications && unmarkedNotifications.length > 0 ? (
             <div className="border-t-2 border-white/20">
               <div className="grid grid-cols-2 p-2 gap-2">
                 {unmarkedNotifications.map((notification) => {
@@ -143,7 +72,7 @@ export default function Notifications() {
           )}
         </TabsContent>
         <TabsContent value="marked">
-          {markedNotifications.length > 0 ? (
+          {markedNotifications && markedNotifications.length > 0 ? (
             <div className="border-t-2 border-white/20">
               <div className="grid grid-cols-2 p-2 gap-2  opacity-80">
                 {markedNotifications.map((notification) => {

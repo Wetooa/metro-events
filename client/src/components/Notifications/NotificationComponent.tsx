@@ -10,7 +10,7 @@ import { CheckIcon } from "@radix-ui/react-icons";
 import { dateFormatter } from "@/lib/utils";
 import moment from "moment";
 import Link from "next/link";
-import { handleMarkNotifications } from "@/app/notifications/page";
+import { handleMarkNotifications } from "@/lib/notifHelpers";
 
 interface NotificationComponentProps extends NotificationsProps {}
 
