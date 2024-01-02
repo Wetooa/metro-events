@@ -49,6 +49,7 @@ import AvatarComponent from "./AvatarComponent";
 import { Card, CardContent } from "./UI/Card";
 import Image from "next/image";
 import { FileObject } from "@supabase/storage-js";
+import { Badge } from "./UI/Badge";
 
 const followEventSchema = z
   .object({
@@ -85,8 +86,17 @@ function useFetchEventImages(eventId: string) {
 export default function EventCard(event: Readonly<GetAllEventsProps>) {
   const router = useRouter();
   const { user } = useAppSelector((state) => state.user);
-  const { id, title, location, info, date, organizer_id, organizer, status } =
-    event;
+  const {
+    id,
+    is_cancelled,
+    title,
+    location,
+    info,
+    date,
+    organizer_id,
+    organizer,
+    status,
+  } = event;
   const { username, privilege } = organizer;
   const images = useFetchEventImages(id);
 
@@ -136,6 +146,26 @@ export default function EventCard(event: Readonly<GetAllEventsProps>) {
     }
   }
 
+  async function handleCancelEvent() {
+    try {
+      if (!user)
+        throw new Error("User must be authenticated to cancel an event!");
+
+      const { data, error } = await supabase.rpc("cancel_event", {
+        event_id_input: id,
+      });
+
+      if (error) throw new Error(error.message);
+
+      toast({
+        title: "Cancel Success",
+        description: "Event canceled successfully!",
+      });
+    } catch (error: any) {
+      toast({ title: "Cancel Error", description: error.message });
+    }
+  }
+
   return (
     <section className="hover:bg-black/30 h-fit transition-all border-b border-white/20 p-4 pr-6">
       <div className="flex gap-2">
@@ -146,9 +176,16 @@ export default function EventCard(event: Readonly<GetAllEventsProps>) {
         <div className="flex-1 space-y-3">
           <div className="flex flex-col gap-2">
             <div className="flex justify-between">
-              <Link href={`/event?id=${id}`}>
-                <h5 className="hover:underline">{title}</h5>
-              </Link>
+              <div className="flex gap-2 items-center">
+                <Link href={`/event?id=${id}`}>
+                  <h5 className="hover:underline">{title}</h5>
+                </Link>
+                {is_cancelled && (
+                  <Badge className="px-1 h-fit w-git" variant={"destructive"}>
+                    Cancelled
+                  </Badge>
+                )}
+              </div>
               <div className="space-x-4">
                 {user && (
                   <>
@@ -227,10 +264,16 @@ export default function EventCard(event: Readonly<GetAllEventsProps>) {
                   <DropdownMenuContent>
                     <DropdownMenuLabel>Event Settings</DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem>Profile</DropdownMenuItem>
-                    <DropdownMenuItem>Billing</DropdownMenuItem>
-                    <DropdownMenuItem>Team</DropdownMenuItem>
-                    <DropdownMenuItem>Subscription</DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => {
+                        router.push(`/event?id=${id}`);
+                      }}
+                    >
+                      See Event Details
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleCancelEvent}>
+                      Cancel Event
+                    </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
