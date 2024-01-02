@@ -6,10 +6,10 @@ import WhatsHappening from "./WhatsHappening";
 
 export default function RightSidebarComponent() {
   return (
-    <aside className="h-screen">
+    <div className="h-screen">
       <SearchBar />
       <UserDetails />
       {/* <WhatsHappening /> */}
-    </aside>
+    </div>
   );
 }

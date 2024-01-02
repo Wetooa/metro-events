@@ -35,7 +35,8 @@ import NoNotifications from "../Notifications/NoNotifications";
 export default function UserDetails() {
   const router = useRouter();
   const { user } = useAppSelector((state) => state.user);
-  const notifications = useFetchNotifications();
+  const { markedNotifications, unmarkedNotifications } =
+    useFetchNotifications();
 
   // might balhin this somewhere
   const dispatch = useAppDispatch();
@@ -103,7 +104,8 @@ export default function UserDetails() {
                       <CardHeader>
                         <CardTitle>Notifications</CardTitle>
                         <CardDescription>
-                          You have {notifications.length} unread messages.
+                          You have {unmarkedNotifications.length} unread
+                          messages.
                         </CardDescription>
                       </CardHeader>
                       <CardContent className="grid gap-4">
@@ -119,8 +121,8 @@ export default function UserDetails() {
                           </div>
                         </div>
                         <div>
-                          {notifications.length > 0 ? (
-                            notifications.map((notification, index) => (
+                          {unmarkedNotifications.length > 0 ? (
+                            unmarkedNotifications.map((notification, index) => (
                               <div
                                 key={index}
                                 className="mb-4 grid grid-cols-[25px_1fr] items-start pb-4 last:mb-0 last:pb-0"
