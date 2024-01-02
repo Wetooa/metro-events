@@ -30,7 +30,10 @@ import { Button } from "../UI/Button";
 import { Dialog, DialogTrigger, DialogContent } from "@/components/UI/Dialog";
 import AvatarComponent from "../AvatarComponent";
 import NoNotifications from "../Notifications/NoNotifications";
-import { useFetchNotifications } from "@/lib/notifHelpers";
+import {
+  handleMarkAllNotifications,
+  useFetchNotifications,
+} from "@/lib/notifHelpers";
 
 export default function UserDetails() {
   const router = useRouter();
@@ -148,7 +151,15 @@ export default function UserDetails() {
                         </div>
                       </CardContent>
                       <CardFooter>
-                        <Button className="w-full">
+                        <Button
+                          onClick={() =>
+                            handleMarkAllNotifications({
+                              user_id_input: user.id,
+                              is_read_input: true,
+                            })
+                          }
+                          className="w-full"
+                        >
                           <CheckIcon className="mr-2 h-4 w-4" /> Mark all as
                           read
                         </Button>

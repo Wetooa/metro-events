@@ -1,4 +1,5 @@
-import AvatarComponent from "@/components/AvatarComponent";
+"use client";
+
 import BackToHomeButton from "@/components/BackToHomeButton";
 import EventsTabs from "@/components/Profile/EventsTabs";
 import { Skeleton } from "@/components/UI/Skeleton";
@@ -10,23 +11,37 @@ import {
   ComponentPlaceholderIcon,
   HandIcon,
 } from "@radix-ui/react-icons";
-import { GetServerSidePropsContext } from "next";
-
 import BadgeComponent from "@/components/BadgeComponent";
 import ImagesTab from "@/components/Profile/ImagesTab";
+import { useEffect, useState } from "react";
+import { toast } from "@/components/UI/Toast/use-toast";
+import { usePathname, useRouter } from "next/navigation";
 
-async function fetchProfile(id: string) {
-  const { data, error } = await supabase.rpc("get_user", { user_id_input: id });
-  // bad code but it will do
-  return error ? null : ((data as any)[0] as UserProps);
+function useFetchProfile(id: string) {
+  const [profile, setProfile] = useState<UserProps>();
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const { data, error } = await supabase.rpc("get_user", {
+          user_id_input: id,
+        });
+        console.log(data);
+        if (error) throw new Error(error.message);
+        setProfile(data);
+      } catch (error: any) {
+        toast({ title: "Fetch Error", description: error.message });
+      }
+    };
+    fetchProfile();
+  }, [id]);
+
+  return profile;
 }
 
-export default async function Profile({
-  params: { id },
-}: {
-  params: { id: string };
-}) {
-  const user = await fetchProfile(id);
+export default function Profile() {
+  const router = useRouter();
+  const id = usePathname().split("/")[2];
+  const user = useFetchProfile(id);
 
   if (!user) {
     return <Skeleton />;
