@@ -21,10 +21,12 @@ async function fetchProfile(id: string) {
   return error ? null : ((data as any)[0] as UserProps);
 }
 
-export default async function Profile({ params }: GetServerSidePropsContext) {
-  if (!params || typeof params.id !== "string") return <Skeleton />;
-
-  const user = await fetchProfile(params.id);
+export default async function Profile({
+  params: { id },
+}: {
+  params: { id: string };
+}) {
+  const user = await fetchProfile(id);
 
   if (!user) {
     return <Skeleton />;
